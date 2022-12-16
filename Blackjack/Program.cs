@@ -110,14 +110,14 @@ namespace blackjack
                     Console.WriteLine($"Dealer went bust! You have won {wager}, current bank balance {bank}");
                     continue;
                 }
-
+                
                 if (userpoints > dealerpoints)
-                { 
+                {
                     bank += wager;
                     Console.WriteLine($"You won {wager}, current bank balance {bank}");
                 }
                 else if (userpoints == dealerpoints)
-                { 
+                {
                     Console.WriteLine($"It's a tie, current bank balance {bank}");
                 }
                 else
@@ -127,7 +127,7 @@ namespace blackjack
                 }
             if (bank ==0)
                 Console.WriteLine("Thank you for playing, you can't continue as you are out of money.");
-            }    
+            }
         }
         public static (string, int) takecard()
         {
@@ -151,7 +151,7 @@ namespace blackjack
                     Console.WriteLine($"You have won {bank-100} dollars and walk away with {bank} dollars!");
                 else if (bank == 100)
                     Console.WriteLine($"You have the same balance as you started with - {bank}!");
-                else 
+                else
                     Console.WriteLine($"You have lost {100-bank} dollars and walk away with {bank} dollars");
             Console.ReadKey();
             Environment.Exit(0);

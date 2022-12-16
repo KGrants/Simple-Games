@@ -159,8 +159,8 @@ namespace blackjack
 
         public static void showcards(List<string> userhand, List<string> dealerhand, int userpoints, int dealerpoints)
         {
-            Console.WriteLine($"You    :  {String.Join(" ", userhand)}  ({userpoints})");
-            Console.WriteLine($"Dealer :  {String.Join(" ", dealerhand)}  ({dealerpoints})");
+            Console.WriteLine($"You     :  {String.Join(" ", userhand)}  ({userpoints})");
+            Console.WriteLine($"Dealer  :  {String.Join(" ", dealerhand)}  ({dealerpoints})");
         }
 
         public static int calculatescore(List<string> a)

@@ -1,4 +1,5 @@
-﻿using System.Security.Cryptography;
+﻿using System;
+using System.Security.Cryptography;
 using System.Threading.Tasks.Dataflow;
 
 namespace blackjack
@@ -7,7 +8,7 @@ namespace blackjack
     {
         static void Main(string[] args)
         {
-            int bank = 100; 
+            int bank = 100;
 
             Console.WriteLine("Let's play a little game of Blackjack.");
             Console.WriteLine("Your wife has noted that you only have 100 dollars available for this evening.");
@@ -20,8 +21,8 @@ namespace blackjack
                 List<string> userhand = new List<string>();
                 List<string> dealerhand = new List<string>();
                 int userpoints = 0, dealerpoints = 0, wager = 0;
-                
-                Console.Cleae();
+
+                Console.Clear();
                 Console.WriteLine("\nPlace your bet!");
                 Console.WriteLine($"Bank balance = {bank}");
                 string bet = Console.ReadLine();
@@ -55,13 +56,12 @@ namespace blackjack
                 }
 
                 while(true)
-                {   
-                    
+                {
                     Console.WriteLine("Hit (H), Stay (S) or Double(D)?");
                     string input = Console.ReadLine();
 
                     if (input!="H" && input!="S" && input!="D")
-                    { 
+                    {
                         Console.WriteLine("Please add a valid input!");
                         continue;
                     }
@@ -87,7 +87,7 @@ namespace blackjack
                         showcards(userhand,dealerhand,userpoints,dealerpoints);
                         break;
                     }
-                    else 
+                    else
                         break;
                 }
 
@@ -113,14 +113,14 @@ namespace blackjack
                     Console.WriteLine($"Dealer went bust! You have won {wager}, current bank balance {bank}");
                     continue;
                 }
-                
+
                 if (userpoints > dealerpoints)
-                {
+                { 
                     bank += wager;
                     Console.WriteLine($"You won {wager}, current bank balance {bank}");
                 }
                 else if (userpoints == dealerpoints)
-                {
+                { 
                     Console.WriteLine($"It's a tie, current bank balance {bank}");
                 }
                 else
@@ -162,8 +162,8 @@ namespace blackjack
 
         public static void showcards(List<string> userhand, List<string> dealerhand, int userpoints, int dealerpoints)
         {
-            Console.WriteLine($"You     :  {String.Join(" ", userhand)}  ({userpoints})");
-            Console.WriteLine($"Dealer  :  {String.Join(" ", dealerhand)}  ({dealerpoints})");
+            Console.WriteLine($"You    :  {String.Join(" ", userhand)}  ({userpoints})");
+            Console.WriteLine($"Dealer :  {String.Join(" ", dealerhand)}  ({dealerpoints})");
         }
 
         public static int calculatescore(List<string> a)

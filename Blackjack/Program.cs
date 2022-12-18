@@ -14,7 +14,8 @@ namespace blackjack
             Console.WriteLine("Your wife has noted that you only have 100 dollars available for this evening.");
             Console.WriteLine("To play the game of Blackjack, you have to bet at least 1 dollar.");
             Console.WriteLine("You can quit game at any point by adding Q to console when it asks for your bet");
-            Console.WriteLine("\nLet's start!");
+            Console.WriteLine("\nReady to start?");
+            Console.ReadKey();
         
             while (bank>0)
             {

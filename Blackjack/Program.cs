@@ -20,8 +20,10 @@ namespace blackjack
                 List<string> userhand = new List<string>();
                 List<string> dealerhand = new List<string>();
                 int userpoints = 0, dealerpoints = 0, wager = 0;
-
+                
+                Console.Cleae();
                 Console.WriteLine("\nPlace your bet!");
+                Console.WriteLine($"Bank balance = {bank}");
                 string bet = Console.ReadLine();
                 
                 if (bet == "Q")
@@ -54,6 +56,7 @@ namespace blackjack
 
                 while(true)
                 {   
+                    
                     Console.WriteLine("Hit (H), Stay (S) or Double(D)?");
                     string input = Console.ReadLine();
 

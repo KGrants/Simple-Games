@@ -1,0 +1,15 @@
+C:\Users\KGrants\Desktop\C#\Blackjack\obj\Debug\net6.0\Blackjack.csproj.AssemblyReference.cache
+C:\Users\KGrants\Desktop\C#\Blackjack\obj\Debug\net6.0\Blackjack.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\KGrants\Desktop\C#\Blackjack\obj\Debug\net6.0\Blackjack.AssemblyInfoInputs.cache
+C:\Users\KGrants\Desktop\C#\Blackjack\obj\Debug\net6.0\Blackjack.AssemblyInfo.cs
+C:\Users\KGrants\Desktop\C#\Blackjack\obj\Debug\net6.0\Blackjack.csproj.CoreCompileInputs.cache
+C:\Users\KGrants\Desktop\C#\Blackjack\bin\Debug\net6.0\Blackjack.exe
+C:\Users\KGrants\Desktop\C#\Blackjack\bin\Debug\net6.0\Blackjack.deps.json
+C:\Users\KGrants\Desktop\C#\Blackjack\bin\Debug\net6.0\Blackjack.runtimeconfig.json
+C:\Users\KGrants\Desktop\C#\Blackjack\bin\Debug\net6.0\Blackjack.dll
+C:\Users\KGrants\Desktop\C#\Blackjack\bin\Debug\net6.0\Blackjack.pdb
+C:\Users\KGrants\Desktop\C#\Blackjack\obj\Debug\net6.0\Blackjack.dll
+C:\Users\KGrants\Desktop\C#\Blackjack\obj\Debug\net6.0\refint\Blackjack.dll
+C:\Users\KGrants\Desktop\C#\Blackjack\obj\Debug\net6.0\Blackjack.pdb
+C:\Users\KGrants\Desktop\C#\Blackjack\obj\Debug\net6.0\Blackjack.genruntimeconfig.cache
+C:\Users\KGrants\Desktop\C#\Blackjack\obj\Debug\net6.0\ref\Blackjack.dll

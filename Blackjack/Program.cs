@@ -44,7 +44,12 @@ namespace blackjack
                 while(true)
                 {
                     /// Next line asks for player action, validates it and assigns to input
-                    string input = getandvalidateinput();
+                    /// If player has more than three cards then only hit or stand are options.
+                    string input = "";
+                    if (userhand.hand.Count==2)
+                        input = getandvalidateinput();
+                    else
+                        input = getandvalidatesecondinput();
 
                     /// If player wants to "STAY", we break loop and continue with dealer turns and results.
                     if (input == "S")
@@ -110,18 +115,18 @@ namespace blackjack
                         multiplehands[0].AddCard();
                         Console.WriteLine($"New hands = {string.Join(" ", multiplehands[0].hand)} and {string.Join(" ", multiplehands[1].hand)}");
 
-
-                        Console.Clear();
-
                         for (int i = 0; i < multiplehands.Count; i++)
                         {
-                            Console.WriteLine($"Your bet is {multiplehands.Sum(x => x.Wager)} in total, bank balance {bank}");
+                            Console.WriteLine($"\nYour bet is {multiplehands.Sum(x => x.Wager)} in total, bank balance after bet {bank-multiplehands.Sum(x => x.Wager)}");
                             bool split = false;
 
                             while(true)
                             {
-                                Console.WriteLine($"\nHand at play: {String.Join(" ", multiplehands[i].hand)}  ({multiplehands[i].Score})");
-                                input = getandvalidateinput();
+                                Console.WriteLine($"Hand at play: {String.Join(" ", multiplehands[i].hand)}  ({multiplehands[i].Score})");
+                                if (multiplehands[i].hand.Count==2)
+                                    input = getandvalidateinput();
+                                else
+                                    input = getandvalidatesecondinput();
 
                                 if (input == "S")
                                     break;

@@ -110,6 +110,23 @@ namespace blackjack
             }
         }
 
+        public static string getandvalidatesecondinput()
+        {
+            while(true)
+            { 
+                Console.WriteLine("Hit (H) or Stand (S)?");
+                string? input = Console.ReadLine();
+
+                if (input!="H" && input!="S")
+                {
+                    Console.WriteLine("Please add a valid input!");
+                    continue;
+                }
+                else
+                    return input;
+            }
+        }
+
         public static int getuserbet()
         {
             while(true)
@@ -130,7 +147,7 @@ namespace blackjack
                     Console.WriteLine("Please add a valid bet or Q to quit the table!");
                     continue;
                 }
-                Console.WriteLine($"Your bet = {rr}, bank balance = {bank}");
+                Console.WriteLine($"Your bet = {rr}, bank balance after bet = {bank-rr}");
 
                 return rr;
             }

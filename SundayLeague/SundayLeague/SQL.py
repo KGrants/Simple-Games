@@ -9,11 +9,11 @@ cur.execute('''CREATE TABLE IF NOT EXISTS Teams
             Valid INTEGER DEFAULT 1,
             Founded INTEGER DEFAULT 0)''')
 
-
 cur.execute('''CREATE TABLE IF NOT EXISTS Players
             (id INTEGER PRIMARY KEY AUTOINCREMENT,
             Name TEXT,
             Surname TEXT,
+            Age INTEGER,
             Offence INTEGER DEFAULT 0,
             Defence INTEGER DEFAULT 0,
             Potential INTEGER DEFAULT 0,

@@ -1,6 +1,5 @@
 import Functions
-from SQL import cur
-    
+import season
 
 def main():
     while True:
@@ -20,11 +19,19 @@ def main():
 
         # Start new season
         elif user_input == 3:
+
+            # Test for game
+            season.game(1,1000)
+
             # To start the season we need to have exactly 10 valid teams
-            Functions.check_team_count()
+            if season.check_team_count():
+                season.wrong_team_count()
+                continue
 
             # To start the season each team needs to have 5 valid players
-            Functions.check_player_count()
+            if season.check_player_count():
+                season.show_teams_above()
+                continue
         
         # Shows all valid teams and players 
         elif user_input == 4:
@@ -38,6 +45,10 @@ def main():
         elif user_input == 6:
             Functions.drop_player()
 
+        # User can sign any player from free agents to any team
+        elif user_input == 7:
+            Functions.sign_player()
+
         # Exits application
         else:
             Functions.exit_app()
@@ -48,9 +59,11 @@ if __name__ == '__main__':
 
 
 # Current To-Do list: 
-# Cut/drop player
+
+# Implement Game system
+# Regular season and Playoffs
+
+# Start a new game or continue previous one (new game would drop data in Games and Player_Score tables)
+# Random player has spent a lot of time in training camp
 # at the end of season potential age decreases potential, potential affects offence and defence
 # MVP gets a boost to potential at the end of season
-# Implement Game system
-# Random player has spent a lot of time in training camp
-# Regular season and Playoffs

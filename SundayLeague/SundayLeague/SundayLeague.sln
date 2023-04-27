@@ -8,6 +8,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{BCEBD60F-9B31-4D23-AED7-3E73098D990F}"
 	ProjectSection(SolutionItems) = preProject
 		Functions.py = Functions.py
+		season.py = season.py
 		SQL.py = SQL.py
 	EndProjectSection
 EndProject

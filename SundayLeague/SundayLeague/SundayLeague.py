@@ -57,8 +57,9 @@ if __name__ == '__main__':
 
 # Current To-Do list: 
 
-# Implement Game system
+# Create logic how to play one round at the time and make sure that each team plays twice with all other teams
 # Regular season and Playoffs
+# Create statistics after each round and season
 
 # Start a new game or continue previous one (new game would drop data in Games and Player_Score tables)
 # Random player has spent a lot of time in training camp

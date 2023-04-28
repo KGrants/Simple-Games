@@ -20,9 +20,6 @@ def main():
         # Start new season
         elif user_input == 3:
 
-            # Test for game
-            season.game(1,1000)
-
             # To start the season we need to have exactly 10 valid teams
             if season.check_team_count():
                 season.wrong_team_count()

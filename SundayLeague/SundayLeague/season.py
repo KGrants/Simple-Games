@@ -68,6 +68,8 @@ def game(home_team, away_team):
     coef = power[0][1]-power[1][1]+power[0][2]-power[1][2]
     home_points = int(100*(1+(coef/100))*random.uniform(0.85,1.15))
     away_points = int(100*(1-(coef/100))*random.uniform(0.85,1.15))
+
+    # If there is a tie randomly add or remove one point from home team
     if home_points == away_points:
         home_points += 1 if random.random() < 0.5 else -1
     winner = home_team if home_points > away_points else away_team
@@ -82,8 +84,46 @@ def game(home_team, away_team):
                    FROM Games
                    ORDER BY 1 DESC""")
 
-    print(cur.fetchone())
-    print(home_points)
-    print(away_points)
+    game_id = cur.fetchone()[0]
+
+    h_player_points = point_distribution(home_points,home_team)
+    a_player_points = point_distribution(away_points,away_team)
+
+    home_ids = get_player_ids(home_team)
+    away_ids = get_player_ids(away_team)
+    
+    for i in range(5):
+        cur.execute("""INSERT INTO Player_Score
+                       VALUES
+                       (%s, %s, %s, %s)""" % (home_ids[i],home_team,game_id,h_player_points[i]))
+
+    for i in range(5):
+        cur.execute("""INSERT INTO Player_Score
+                       VALUES
+                       (%s, %s, %s, %s)""" % (away_ids[i],home_team,game_id,a_player_points[i]))
 
     return
+
+
+def point_distribution(points, team_id):
+    cur.execute("""SELECT Offence + Defence
+                   FROM Players
+                   WHERE 1 = 1
+                   AND Team = %s
+                   ORDER BY Id""" % (team_id))
+    ratings = [i[0] for i in cur.fetchall()]
+    player_points = []
+    rat_sum = sum(ratings)
+    weight = points/rat_sum
+    for i in range(4):
+        player_points.append(int(weight*ratings[i]))
+    player_points.append(points-sum(player_points))
+    return player_points
+
+def get_player_ids(team_id):
+    cur.execute("""SELECT id
+                   FROM Players
+                   WHERE 1 = 1
+                   AND Team = %s
+                   ORDER BY Id""" % (team_id))
+    return [i[0] for i in cur.fetchall()]

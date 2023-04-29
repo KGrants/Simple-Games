@@ -7,6 +7,8 @@ from Functions import show_one_team
 from Functions import trade_players
 from Functions import drop_player
 from Functions import sign_player
+import statistics_SL as s
+
 
 
 
@@ -159,6 +161,9 @@ def season_screen():
     games_list = generate_all_games()
     year = 2023
     season_round = 0
+    cur.execute("""DELETE FROM Games""")
+    cur.execute("""DELETE FROM Player_Score""")
+    conn.commit()
 
 
     while True:
@@ -175,6 +180,9 @@ def season_screen():
 
             games_list = play_round(games_list)
             season_round += 1
+            s.show_standings()
+            s.show_top_scorers()
+            
 
         elif user_input == 2:
             print("First player:")

@@ -131,9 +131,10 @@ def trade_players(one_id, two_id):
     cur.execute("""UPDATE Players
                    SET Team = %s
                    WHERE id = %s""" % (two_team_id, one_id))
+    conn.commit()
     cur.execute("""UPDATE Players
                    SET Team = %s
-                   WHERE id = %s""" % (two_id, one_team_id))
+                   WHERE id = %s""" % (one_team_id, two_id))
     conn.commit()
     print(f"Trade has been successfully done!")
     return

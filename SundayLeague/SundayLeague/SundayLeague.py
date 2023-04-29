@@ -1,6 +1,7 @@
 import Functions
 import season
 from SQL import cur
+import statistics_SL
 
 def main():
     while True:
@@ -20,10 +21,7 @@ def main():
 
         # Start new season
         elif user_input == 3:
-
-            # Testing 
             
-
             # To start the season we need to have exactly 10 valid teams
             if season.check_team_count() != 10:
                 season.wrong_team_count()
@@ -64,9 +62,9 @@ if __name__ == '__main__':
 
 # Current To-Do list: 
 
-# Create logic how to play one round at the time and make sure that each team plays twice with all other teams
-# Regular season and Playoffs
-# Create statistics after each round and season
+# Playoffs
+# Create statistics after season
+# New Season
 
 # Start a new game or continue previous one (new game would drop data in Games and Player_Score tables)
 # Random player has spent a lot of time in training camp

@@ -1,7 +1,13 @@
+from re import I
 from SQL import conn
 from SQL import cur
 import random
 import itertools
+from Functions import show_one_team
+from Functions import trade_players
+from Functions import drop_player
+from Functions import sign_player
+
 
 
 def check_team_count():
@@ -46,22 +52,6 @@ def show_teams_above():
     return
 
 
-def season_screen():
-    ############# Need to implement ###############
-    ############# if new season, create new list of permutations ###############
-    ############# If continue previous season, don't touch ###############
-
-    year = 2023
-    season_round = 0
-    print(f"\n{year} season, round {season_round}:")
-    options = ["1. Advance one Round", 
-               "2. Trade player", 
-               "3. Cut player", 
-               "4. Sign free agent", 
-               "5. Exit"]
-    print("", *options, sep="\n")   # Print menu
-    return int(input(">").strip())  # Get user input
-
 
 def game(home_team, away_team):
     # calculating points for both teams based on 30% random chance and offence/defence ratio
@@ -71,7 +61,7 @@ def game(home_team, away_team):
                    AND Team in (%s, %s)
                    GROUP BY Team""" % (home_team, away_team))
     power = [i for i in cur.fetchall()]
-    home_points = int(100*(1+((power[0][1]-power[1][2])/100))*random.uniform(0.85,1.15))
+    home_points = int(100*(1+((power[0][1]-power[1][2])/100))*random.uniform(0.88,1.18))
     away_points = int(100*(1-((power[1][1]-power[0][2])/100))*random.uniform(0.85,1.15))
 
     # If there is a tie randomly add or remove one point from home team
@@ -134,6 +124,16 @@ def point_distribution(points, team_id):
     return {ids[i]: player_points[i] for i in range(5)}
 
 
+def generate_all_games():
+    cur.execute("""SELECT id
+                   FROM Teams
+                   WHERE 1 = 1
+                   AND valid = 1
+                   AND id != 999""")
+    team_list = [i[0] for i in cur.fetchall()]
+    return list(itertools.permutations(team_list,2))
+
+
 def play_round(game_list):
     games = game_list
     game_count=0
@@ -145,16 +145,51 @@ def play_round(game_list):
             teams_played.append(i[1])
             game_count += 1
             games.remove(i)
-        if game_count == 4:
+        if game_count == 5:
             break
     return games
 
 
-def generate_all_games():
-    cur.execute("""SELECT id
-                   FROM Teams
-                   WHERE 1 = 1
-                   AND valid = 1
-                   AND id != 999""")
-    team_list = [i[0] for i in cur.fetchall()]
-    return list(itertools.permutations(team_list))
+
+def season_screen():
+    ############# Need to implement ###############
+    ############# if new season, create new list of permutations ###############
+    ############# If continue previous season, don't touch ###############
+
+    games_list = generate_all_games()
+    year = 2023
+    season_round = 0
+
+
+    while True:
+        print(f"\n{year} season, round {season_round}:")
+        options = ["1. Advance one Round", 
+                   "2. Trade player", 
+                   "3. Cut player", 
+                   "4. Sign free agent", 
+                   "5. Exit"]
+        print("", *options, sep="\n")   # Print menu
+        user_input = int(input(">").strip())  # Get user input
+
+        if user_input == 1:
+
+            games_list = play_round(games_list)
+            season_round += 1
+
+        elif user_input == 2:
+            print("First player:")
+            show_one_team()
+            first_to_trade = int(input("Please provide id of player that needs to be traded : "))
+            print("Second player:")
+            show_one_team()
+            second_to_trade = int(input("Please provide id of player that needs to be traded : "))
+            trade_players(first_to_trade, second_to_trade)
+
+        elif user_input == 3:
+            drop_player()
+
+        elif user_input == 4:
+            sign_player()
+
+        else:
+            break

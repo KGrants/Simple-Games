@@ -113,6 +113,32 @@ def drop_player():
     print(f"Player has been released to Free Agents")
     return
 
+
+def trade_players(one_id, two_id):
+    cur.execute("""SELECT id, Team
+                   FROM Players 
+                   WHERE 1 = 1
+                   AND id = %s""" % (one_id))
+    one_team_id = cur.fetchone()[1]
+
+    cur.execute("""SELECT id, Team
+                   FROM Players 
+                   WHERE 1 = 1
+                   AND id = %s""" % (two_id))
+    two_team_id = cur.fetchone()[1]
+
+
+    cur.execute("""UPDATE Players
+                   SET Team = %s
+                   WHERE id = %s""" % (two_team_id, one_id))
+    cur.execute("""UPDATE Players
+                   SET Team = %s
+                   WHERE id = %s""" % (two_id, one_team_id))
+    conn.commit()
+    print(f"Trade has been successfully done!")
+    return
+
+
 def sign_player():
     print("Free Agents:")
     show_players(999)

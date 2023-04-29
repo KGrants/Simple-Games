@@ -22,21 +22,7 @@ def main():
         elif user_input == 3:
 
             # Testing 
-            game_list = season.generate_all_games()
-            game_list = season.play_round(game_list)
-            print(len(game_list))
-            cur.execute("""SELECT *
-                           FROM Games
-                           ORDER BY 1 DESC
-                           LIMIT 10""")
-            print(cur.fetchall())
-            game_list = season.play_round(game_list)
-            print(len(game_list))
-            cur.execute("""SELECT *
-                           FROM Games
-                           ORDER BY 1 DESC
-                           LIMIT 10""")
-            print(cur.fetchall())
+            
 
             # To start the season we need to have exactly 10 valid teams
             if season.check_team_count() != 10:
@@ -47,6 +33,9 @@ def main():
             if season.check_player_count():
                 season.show_teams_above()
                 continue
+
+            # Move to season screen
+            season.season_screen()
         
         # Shows all valid teams and players 
         elif user_input == 4:

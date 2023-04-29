@@ -1,5 +1,6 @@
 import Functions
 import season
+from SQL import cur
 
 def main():
     while True:
@@ -20,8 +21,25 @@ def main():
         # Start new season
         elif user_input == 3:
 
+            # Testing 
+            game_list = season.generate_all_games()
+            game_list = season.play_round(game_list)
+            print(len(game_list))
+            cur.execute("""SELECT *
+                           FROM Games
+                           ORDER BY 1 DESC
+                           LIMIT 10""")
+            print(cur.fetchall())
+            game_list = season.play_round(game_list)
+            print(len(game_list))
+            cur.execute("""SELECT *
+                           FROM Games
+                           ORDER BY 1 DESC
+                           LIMIT 10""")
+            print(cur.fetchall())
+
             # To start the season we need to have exactly 10 valid teams
-            if season.check_team_count():
+            if season.check_team_count() != 10:
                 season.wrong_team_count()
                 continue
 

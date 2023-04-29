@@ -61,10 +61,11 @@ def show_players(team_id):
     players = [i for i in cur.fetchall()]
     for j in players:
         print(f"{j[1]} {j[2]} (id:{j[0]}) - age: {j[3]} off: {j[4]} def: {j[5]} pot: {j[6]}")
-    off_avg = statistics.mean([x[4] for x in players])
-    def_avg = statistics.mean([x[5] for x in players])
-    pot_avg = statistics.mean([x[6] for x in players])
-    print(f"Team avg = off:{round(off_avg,2)} def:{round(def_avg,2)} pot: {round(pot_avg,2)}")
+    if len(players) > 0:
+        off_avg = statistics.mean([x[4] for x in players])
+        def_avg = statistics.mean([x[5] for x in players])
+        pot_avg = statistics.mean([x[6] for x in players])
+        print(f"Team avg = off:{round(off_avg,2)} def:{round(def_avg,2)} pot: {round(pot_avg,2)}")
     return
 
 
@@ -75,7 +76,7 @@ def show_all_teams():
                    AND valid = 1""")
     teams = [i for i in cur.fetchall()]
     for i in teams:
-        print(f"\n{i[1]}:")
+        print(f"\n{i[1]} (id = {i[0]}) :")
         show_players(i[0])
     print(f"\n")
     return

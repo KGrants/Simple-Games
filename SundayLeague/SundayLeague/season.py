@@ -1,6 +1,7 @@
 from SQL import conn
 from SQL import cur
 import random
+import itertools
 
 
 def check_team_count():
@@ -9,7 +10,7 @@ def check_team_count():
                    WHERE 1 = 1
                    AND valid = 1
                    AND id != 999""")
-    return False if cur.fetchone()[0] == 5 else True
+    return cur.fetchone()[0]
 
 
 def wrong_team_count():
@@ -46,6 +47,10 @@ def show_teams_above():
 
 
 def season_screen():
+    ############# Need to implement ###############
+    ############# if new season, create new list of permutations ###############
+    ############# If continue previous season, don't touch ###############
+
     year = 2023
     season_round = 0
     print(f"\n{year} season, round {season_round}:")
@@ -66,8 +71,8 @@ def game(home_team, away_team):
                    AND Team in (%s, %s)
                    GROUP BY Team""" % (home_team, away_team))
     power = [i for i in cur.fetchall()]
-    home_points = int(100*(1+(power[0][1]-power[1][2]/100))*random.uniform(0.85,1.15))
-    away_points = int(100*(1-(power[1][1]-power[0][2]/100))*random.uniform(0.85,1.15))
+    home_points = int(100*(1+((power[0][1]-power[1][2])/100))*random.uniform(0.85,1.15))
+    away_points = int(100*(1-((power[1][1]-power[0][2])/100))*random.uniform(0.85,1.15))
 
     # If there is a tie randomly add or remove one point from home team
     if home_points == away_points:
@@ -127,3 +132,29 @@ def point_distribution(points, team_id):
     ids = [i[0] for i in cur.fetchall()]
 
     return {ids[i]: player_points[i] for i in range(5)}
+
+
+def play_round(game_list):
+    games = game_list
+    game_count=0
+    teams_played = []
+    for i in games:
+        if i[0] not in teams_played and i[1] not in teams_played:
+            game(int(i[0]), int(i[1]))
+            teams_played.append(i[0])
+            teams_played.append(i[1])
+            game_count += 1
+            games.remove(i)
+        if game_count == 4:
+            break
+    return games
+
+
+def generate_all_games():
+    cur.execute("""SELECT id
+                   FROM Teams
+                   WHERE 1 = 1
+                   AND valid = 1
+                   AND id != 999""")
+    team_list = [i[0] for i in cur.fetchall()]
+    return list(itertools.permutations(team_list))

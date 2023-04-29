@@ -39,3 +39,8 @@ def show_top_scorers():
         print(f"{place}. {i[1]} {i[2]} ({i[3]}) = {i[4]} pts")
         place += 1
     return
+
+
+def mvp():
+    # to implement
+    return

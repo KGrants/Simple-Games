@@ -7,6 +7,7 @@ from Functions import show_one_team
 from Functions import trade_players
 from Functions import drop_player
 from Functions import sign_player
+from Functions import show_all_teams
 import statistics_SL as s
 
 
@@ -154,24 +155,26 @@ def play_round(game_list):
 
 
 def season_screen():
-    ############# Need to implement ###############
-    ############# if new season, create new list of permutations ###############
-    ############# If continue previous season, don't touch ###############
-
     games_list = generate_all_games()
     year = 2023
-    season_round = 0
+    season_round = 1
     cur.execute("""DELETE FROM Games""")
     cur.execute("""DELETE FROM Player_Score""")
     conn.commit()
 
 
     while True:
+
+        if season_round == 19:
+            print(f"\n{year} playoffs!")
+            playoffs()
+
         print(f"\n{year} season, round {season_round}:")
         options = ["1. Advance one Round", 
                    "2. Trade player", 
                    "3. Cut player", 
-                   "4. Sign free agent", 
+                   "4. Sign free agent",
+                   "5. Show all teams",
                    "5. Exit"]
         print("", *options, sep="\n")   # Print menu
         user_input = int(input(">").strip())  # Get user input
@@ -199,5 +202,18 @@ def season_screen():
         elif user_input == 4:
             sign_player()
 
+        elif user_input == 5:
+            show_all_teams()
+
         else:
             break
+
+
+
+def playoffs():
+    while True:
+        print("Press 1 to play next games")
+        int(input(">").strip())
+        
+
+

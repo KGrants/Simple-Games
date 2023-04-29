@@ -1,7 +1,5 @@
 import Functions
 import season
-from SQL import cur
-import statistics_SL
 
 def main():
     while True:
@@ -64,6 +62,7 @@ if __name__ == '__main__':
 
 # Playoffs
 # Create statistics after season
+# Create new table where to store historical regular season and playoff results
 # New Season
 
 # Start a new game or continue previous one (new game would drop data in Games and Player_Score tables)

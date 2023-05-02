@@ -10,6 +10,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		Functions.py = Functions.py
 		season.py = season.py
 		SQL.py = SQL.py
+		sql_queries.py = sql_queries.py
 		statistics_SL.py = statistics_SL.py
 	EndProjectSection
 EndProject

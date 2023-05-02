@@ -15,6 +15,41 @@ def show_standings():
 
 def show_top_scorers():
     print("\nTop Scorers:")
+    top_scorers_sql()
+    place = 1
+    for i in cur.fetchall():
+        print(f"{place}. {i[1]} {i[2]} ({i[3]}) = {i[4]} pts")
+        place += 1
+    return
+
+
+def mvp():
+    cur.execute("""SELECT T.id, COUNT(G.id)*3
+                   FROM Teams T
+                   LEFT JOIN Games G ON G.Winner = T.id
+                   GROUP BY T.Name
+                   ORDER BY 2 DESC
+                   LIMIT 3""")
+    winner_teams = [i[0] for i in cur.fetchall()]
+    top_scorers_sql()
+    mvp_winner = ("",0)
+    for i in cur.fetchall():
+        if i[3] == winner_teams[0]:
+            if i[4]*1.2>mvp_winner[1]:
+                mvp_winner = (f"{i[1]} {i[2]}", int(i[4]*1.2))
+        elif i[3] == winner_teams[1]:
+            if i[4]*1.15>mvp_winner[1]:
+                mvp_winner = (f"{i[1]} {i[2]}", int(i[4]*1.15))
+        elif i[3] == winner_teams[2]:
+            if i[4]*1.1>mvp_winner[1]:
+                mvp_winner = (f"{i[1]} {i[2]}", int(i[4]*1.1))
+        else:
+            if i[4]>mvp_winner[1]:
+                mvp_winner = (f"{i[1]} {i[2]}", int(i[4]))
+
+    return
+
+def top_scorers_sql():
     cur.execute("""WITH HighScorers AS
                    (
                    SELECT 
@@ -34,13 +69,4 @@ def show_top_scorers():
                    WHERE RowNum = 1
                    LIMIT 5
                    """)
-    place = 1
-    for i in cur.fetchall():
-        print(f"{place}. {i[1]} {i[2]} ({i[3]}) = {i[4]} pts")
-        place += 1
-    return
-
-
-def mvp():
-    # to implement
     return

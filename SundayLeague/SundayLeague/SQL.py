@@ -46,7 +46,7 @@ cur.execute('''CREATE TABLE IF NOT EXISTS Reg_Season_Results
             Team_id INTEGER,
             Position INTEGER,
             Points INTEGER DEFAULT 0,
-            CONSTRAINT FK_Team_id FOREIGN KEY (Team_id) REFERENCES Teams(id)''')
+            CONSTRAINT FK_Team_id_reg FOREIGN KEY (Team_id) REFERENCES Teams(id))''')
 
 conn.commit()
 

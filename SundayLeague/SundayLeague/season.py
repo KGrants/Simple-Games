@@ -166,6 +166,8 @@ def season_screen():
     while True:
 
         if season_round == 19:
+            print("\nRegular Season MVP:")
+            s.mvp()
             print(f"\n{year} playoffs!")
             playoffs()
 
@@ -214,6 +216,7 @@ def playoffs():
     while True:
         print("Press 1 to play next games")
         int(input(">").strip())
+        return
         
 
 

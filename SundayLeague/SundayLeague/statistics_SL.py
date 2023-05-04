@@ -24,7 +24,7 @@ def show_top_scorers():
 
 
 def mvp():
-    cur.execute("""SELECT T.id, COUNT(G.id)*3
+    cur.execute("""SELECT T.Name, COUNT(G.id)*3
                    FROM Teams T
                    LEFT JOIN Games G ON G.Winner = T.id
                    GROUP BY T.Name
@@ -46,6 +46,8 @@ def mvp():
         else:
             if i[4]>mvp_winner[1]:
                 mvp_winner = (f"{i[1]} {i[2]}", int(i[4]))
+
+    print(f"{mvp_winner[0]}")
 
     return
 

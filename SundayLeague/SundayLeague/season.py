@@ -155,6 +155,17 @@ def play_round(game_list):
 
 
 def season_screen():
+
+    # To start the season we need to have exactly 10 valid teams
+    if check_team_count() != 10:
+        wrong_team_count()
+        return
+
+    # To start the season each team needs to have 5 valid players
+    if check_player_count():
+        show_teams_above()
+        return
+
     games_list = generate_all_games()
     year = 2023
     season_round = 1
@@ -223,9 +234,9 @@ def playoffs():
         p = [i for i in cur.fetchall()]
 
         print(f"{p[0][1]} - {p[7][1]}")
+        print(f"{p[3][1]} - {p[4][1]}")
         print(f"{p[1][1]} - {p[6][1]}")
         print(f"{p[2][1]} - {p[5][1]}")
-        print(f"{p[3][1]} - {p[4][1]}")
         
         print("Press any key to simulate next round")
         int(input(">").strip())

@@ -7,6 +7,8 @@ import statistics
 
 
 def first_screen():
+    """Prints out first screen menu and obtains users choice"""
+
     print("Welcome to Sunday League NBA:")
     options = ["1. Create a Team", 
                "2. Create a Player", 
@@ -17,11 +19,24 @@ def first_screen():
                "7. Sign a free agent",
                "8. Create Custom Player",
                "9. Exit"]
-    print("", *options, sep="\n")   # Print menu
-    return int(input(">").strip())  # Get user input
+    print("", *options, sep="\n")
+
+    user_input = input(">").strip()
+    if user_input in "12345678":
+        return int(user_input)
+    else:
+        return 9
 
 
-def create_team(name, founded):
+def create_team():
+    """Create a new team and write it to DB"""
+    name = input("Please provide team name : ").strip()
+    founded = input("Please provide year when team was founded (YYYY) : ").strip()
+    if founded.isnumeric():
+        founded = int(founded)
+    else:
+        print("You did not add a valid year.")
+        return
     if name != "Free Agents":
         cur.execute("""INSERT INTO Teams (Name, Founded)
                        VALUES ('%s', %s);"""
@@ -35,7 +50,8 @@ def create_team(name, founded):
     return
 
 
-def create_player(team_id):
+def create_player():
+    team_id = int(input("Please provide team_id for which to create a player : ").strip())
     first_name = names.get_first_name(gender="male")
     last_name = names.get_last_name()
     offence = random.randint(50, 100)

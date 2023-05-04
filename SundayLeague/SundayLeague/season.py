@@ -214,9 +214,100 @@ def season_screen():
 
 def playoffs():
     while True:
-        print("Press 1 to play next games")
+        cur.execute("""SELECT T.id, T.Name, COUNT(G.id)*3
+                FROM Teams T
+                LEFT JOIN Games G ON G.Winner = T.id
+                GROUP BY T.Name
+                ORDER BY 3 DESC
+                LIMIT 8""")
+        p = [i for i in cur.fetchall()]
+
+        print(f"{p[0][1]} - {p[7][1]}")
+        print(f"{p[1][1]} - {p[6][1]}")
+        print(f"{p[2][1]} - {p[5][1]}")
+        print(f"{p[3][1]} - {p[4][1]}")
+        
+        print("Press any key to simulate next round")
         int(input(">").strip())
+
+        second_round = []
+        second_round.append(playoff_series(p[0][0],p[7][0]))
+        second_round.append(playoff_series(p[3][0],p[4][0]))
+        second_round.append(playoff_series(p[1][0],p[6][0]))
+        second_round.append(playoff_series(p[2][0],p[5][0]))
+        
+
+        v = []
+        for i in second_round:
+            for j in p:
+                if i == j[0]:
+                    v.append(j)
+                    continue
+        
+        print("SEMI-FINALS:")
+        print(f"{v[0][1]} - {v[1][1]}")
+        print(f"{v[2][1]} - {v[3][1]}")
+
+        print("Press any key to simulate semi-finals")
+        int(input(">").strip())
+
+        third_round = []
+        third_round.append(playoff_series(v[0][0],v[1][0]))
+        third_round.append(playoff_series(v[2][0],v[3][0]))
+
+        x = []
+
+        for i in third_round:
+            for j in v:
+                if i == j[0]:
+                    x.append(j)
+                    continue
+        
+        print("FINALS:")
+        print(f"{x[0][1]} - {x[1][1]}")
+        print("Press 1 to simulate finals")
+        int(input(">").strip())
+        playoff_series(x[0][0],x[1][0])
+
+
         return
         
+
+def playoff_series(team_a, team_b):
+    wins_a = 0
+    wins_b = 0
+
+    while True:
+        if wins_a == 4 or wins_b == 4:
+            break;
+        cur.execute("""SELECT Team, AVG(Offence), AVG(Defence)
+                       FROM Players
+                       WHERE 1 = 1 
+                       AND Team in (%s, %s)
+                       GROUP BY Team""" % (team_a, team_b))
+        power = [i for i in cur.fetchall()]
+        home_points = int(100*(1+((power[0][1]-power[1][2])/100))*random.uniform(0.85,1.15))
+        away_points = int(100*(1-((power[1][1]-power[0][2])/100))*random.uniform(0.85,1.15))
+
+        if home_points == away_points:
+            home_points += 1 if random.random() < 0.5 else -1
+
+        winner = team_a if home_points > away_points else team_b
+
+        if winner == team_a:
+            wins_a+=1
+            continue
+        else:
+            wins_b+=1
+            continue
+
+    cur.execute("""SELECT Name
+                   FROM Teams
+                   WHERE 1 = 1
+                   AND id = %s""" % (winner))
+    team_name = cur.fetchone()[0]
+
+    print(f"{team_name} won the series ({wins_a if wins_a>wins_b else wins_b}:{wins_a if wins_a<wins_b else wins_b})")
+    return winner
 
 

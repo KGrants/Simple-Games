@@ -49,6 +49,10 @@ def main():
         elif user_input == 7:
             Functions.sign_player()
 
+        # User can sign any player from free agents to any team
+        elif user_input == 8:
+            Functions.create_custom_player()
+
         # Exits application
         else:
             Functions.exit_app()

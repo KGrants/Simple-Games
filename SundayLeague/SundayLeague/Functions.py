@@ -15,7 +15,8 @@ def first_screen():
                "5. Show one team", 
                "6. Drop Player from team",
                "7. Sign a free agent",
-               "8. Exit"]
+               "8. Create Custom Player",
+               "9. Exit"]
     print("", *options, sep="\n")   # Print menu
     return int(input(">").strip())  # Get user input
 
@@ -41,6 +42,26 @@ def create_player(team_id):
     defence = random.randint(50, 100)
     age = random.randint(16, 32)
     potential = int(100 - random.randint(0, 50) * ((age**2)/32)/16)
+
+    cur.execute("""INSERT INTO Players
+                   (Name, Surname, Age, Offence, Defence, Potential, Team)
+                   VALUES
+                   ('%s', '%s', '%s', %s, %s, %s, %s)"""
+                   % (first_name, last_name, age, offence, defence, potential, team_id))
+    conn.commit()
+    print(f"{first_name} {last_name} was created successfully!")
+    print(f"Age = {age}\nOffence = {offence}\nDefence = {defence}\nPotential = {potential}\n")
+    return
+
+
+def create_custom_player():
+    team_id = int(input("Team id:"))
+    first_name = input("Name:")
+    last_name = input("Surname:")
+    offence = int(input("Offence:"))
+    defence = int(input("Defence:"))
+    age = int(input("Age:"))
+    potential = int(input("Potential:"))
 
     cur.execute("""INSERT INTO Players
                    (Name, Surname, Age, Offence, Defence, Potential, Team)

@@ -1,69 +1,29 @@
-from re import I
 from SQL import conn
 from SQL import cur
 import random
 import itertools
-from Functions import show_one_team
-from Functions import trade_players
-from Functions import drop_player
-from Functions import sign_player
-from Functions import show_all_teams
 import statistics_SL as s
-
-
-
-
-def check_team_count():
-    cur.execute("""SELECT Count(*) 
-                   FROM Teams
-                   WHERE 1 = 1
-                   AND valid = 1
-                   AND id != 999""")
-    return cur.fetchone()[0]
+import sql_queries as sqlq
+import sys
 
 
 def wrong_team_count():
-    print("You have to have 10 teams to start the season,")
-    print(f"Currently there are {check_team_count()} valid teams!")
+    print(f"\nYou have to have 10 teams to start the season,")
+    print(f"Currently there are {sqlq.check_team_count()} valid teams!")
     return
-
-
-def check_player_count():
-    cur.execute("""SELECT t.Name, COUNT(*)
-                   FROM Players p
-                   INNER JOIN Teams t ON t.id = p.Team
-                   WHERE 1 = 1 
-                   AND t.valid = 1
-                   AND t.id != 999
-                   GROUP by t.Name
-                   HAVING COUNT(*) != 5""")
-    return False if cur.fetchone() == None else True
 
 
 def show_teams_above():
-    cur.execute("""SELECT t.id, t.name, COUNT(*)
-                   FROM Players p
-                   INNER JOIN Teams t ON t.id = p.Team
-                   WHERE 1 = 1 
-                   AND t.valid = 1
-                   AND t.id != 999
-                   GROUP by t.Name
-                   HAVING COUNT(*) != 5""")
+    sqlq.player_count_sql()
     for i in cur.fetchall():
-        print(i[1],f"currently has {i[2]} players.")
-        print("To start the season it needs to have 5 players.")
+        print(f"{i[1]} currently has {i[2]} players.")
+        print(f"To start the season it needs to have 5 players.")
     return
-
 
 
 def game(home_team, away_team):
     # calculating points for both teams based on 30% random chance and offence/defence ratio
-    cur.execute("""SELECT Team, AVG(Offence), AVG(Defence)
-                   FROM Players
-                   WHERE 1 = 1 
-                   AND Team in (%s, %s)
-                   GROUP BY Team""" % (home_team, away_team))
-    power = [i for i in cur.fetchall()]
+    power = sqlq.team_power(home_team, away_team)
     home_points = int(100*(1+((power[0][1]-power[1][2])/100))*random.uniform(0.88,1.18))
     away_points = int(100*(1-((power[1][1]-power[0][2])/100))*random.uniform(0.85,1.15))
 
@@ -104,12 +64,7 @@ def game(home_team, away_team):
 
 
 def point_distribution(points, team_id):
-    cur.execute("""SELECT Offence + Defence
-                   FROM Players
-                   WHERE 1 = 1
-                   AND Team = %s
-                   ORDER BY Id""" % (team_id))
-    ratings = [i[0] for i in cur.fetchall()]
+    ratings = sqlq.player_power_sql(team_id)
     rat_weight = points/sum(ratings)
     player_points = []
 
@@ -117,23 +72,13 @@ def point_distribution(points, team_id):
         player_points.append(int(rat_weight*ratings[i]))
     player_points.append(points-sum(player_points))
 
-    cur.execute("""SELECT id
-                   FROM Players
-                   WHERE 1 = 1
-                   AND Team = %s
-                   ORDER BY Id""" % (team_id))
-    ids = [i[0] for i in cur.fetchall()]
+    ids = sqlq.player_id_sql(team_id)
 
     return {ids[i]: player_points[i] for i in range(5)}
 
 
 def generate_all_games():
-    cur.execute("""SELECT id
-                   FROM Teams
-                   WHERE 1 = 1
-                   AND valid = 1
-                   AND id != 999""")
-    team_list = [i[0] for i in cur.fetchall()]
+    team_list = sqlq.gen_all_games_sql()
     return list(itertools.permutations(team_list,2))
 
 
@@ -150,29 +95,25 @@ def play_round(game_list):
             games.remove(i)
         if game_count == 5:
             break
+    s.show_standings()
+    s.show_top_scorers()
     return games
-
 
 
 def playoffs():
     print("\nRegular Season MVP:")
     s.mvp()
-    while True:
-        cur.execute("""SELECT T.id, T.Name, COUNT(G.id)*3
-                FROM Teams T
-                LEFT JOIN Games G ON G.Winner = T.id
-                GROUP BY T.Name
-                ORDER BY 3 DESC
-                LIMIT 8""")
-        p = [i for i in cur.fetchall()]
 
+    while True:
+        p = sqlq.playoff_teams_sql()
+
+        print()
         print(f"{p[0][1]} - {p[7][1]}")
         print(f"{p[3][1]} - {p[4][1]}")
         print(f"{p[1][1]} - {p[6][1]}")
         print(f"{p[2][1]} - {p[5][1]}")
         
-        print("Press any key to simulate next round")
-        int(input(">").strip())
+        input("Press any key to simulate next round")
 
         second_round = []
         second_round.append(playoff_series(p[0][0],p[7][0]))
@@ -224,12 +165,8 @@ def playoff_series(team_a, team_b):
     while True:
         if wins_a == 4 or wins_b == 4:
             break;
-        cur.execute("""SELECT Team, AVG(Offence), AVG(Defence)
-                       FROM Players
-                       WHERE 1 = 1 
-                       AND Team in (%s, %s)
-                       GROUP BY Team""" % (team_a, team_b))
-        power = [i for i in cur.fetchall()]
+
+        power = sqlq.team_power(team_a, team_b)
         home_points = int(100*(1+((power[0][1]-power[1][2])/100))*random.uniform(0.85,1.15))
         away_points = int(100*(1-((power[1][1]-power[0][2])/100))*random.uniform(0.85,1.15))
 
@@ -245,12 +182,7 @@ def playoff_series(team_a, team_b):
             wins_b+=1
             continue
 
-    cur.execute("""SELECT Name
-                   FROM Teams
-                   WHERE 1 = 1
-                   AND id = %s""" % (winner))
-    team_name = cur.fetchone()[0]
-
+    team_name = sqlq.get_team_name_sql(winner)
     print(f"{team_name} won the series ({wins_a if wins_a>wins_b else wins_b}:{wins_a if wins_a<wins_b else wins_b})")
     return winner
 

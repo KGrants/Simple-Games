@@ -36,7 +36,7 @@ def season_menu():
                "3. Cut player", 
                "4. Sign free agent",
                "5. Show all teams",
-               "5. Exit"]
+               "6. Exit"]
     print("", *options, sep="\n")
 
     user_input = input(">").strip()

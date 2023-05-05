@@ -1,6 +1,7 @@
 import Functions as f
 import statistics_SL as s
 import season as se
+import sql_queries as sqlq
 
 def main():
     while True:
@@ -23,21 +24,26 @@ def main():
 def season_screen():
 
     start_new_season = True
-    games_list = f.generate_all_games()
+    games_list = se.generate_all_games()
     year = 2023
     season_round = 1
 
-    if f.check_team_count() != 10:                        # To start the season we need to have exactly 10 valid teams
-        f.wrong_team_count()
+    if sqlq.check_team_count() != 10:                        # To start the season we need to have exactly 10 valid teams
+        se.wrong_team_count()
         return
 
-    if f.check_player_count():                            # To start the season each team needs to have 5 valid players
-        f.show_teams_above()
+    if sqlq.check_player_count():                            # To start the season each team needs to have 5 valid players
+        se.show_teams_above()
         return
 
     if start_new_season:                                  # If we need to start new game with clear DB, clear down Games and Player_scores
         f.reset_season()
 
+    function_dictionary = {2:f.trade_players,             # Trade players between teams
+                           3:f.drop_player,               # Drops player from team to free agents
+                           4:f.sign_player,               # Sign player from free agents to team
+                           5:f.show_all_teams             # Shows all teams and players
+                           }
 
     while True:
 
@@ -46,28 +52,17 @@ def season_screen():
             se.playoffs()
 
         print(f"\n{year} season, round {season_round}:")
-        user_input = f.season_menu()
+        user_input = f.season_menu()                      # season screen alows the user to choose between actions
 
-        if user_input == 1:
-            games_list = se.play_round(games_list)
-            season_round += 1
-            s.show_standings()
-            s.show_top_scorers()
+        if user_input == 1:                               # Simulates games of one round and displays results
+            games_list = se.play_round(games_list)        #
+            season_round += 1                             # 
 
-        elif user_input == 2:
-            f.trade_players()
-
-        elif user_input == 3:
-            f.drop_player()
-
-        elif user_input == 4:
-            f.sign_player()
-
-        elif user_input == 5:
-            f.show_all_teams()
+        elif user_input == 6:                             # break back to main screen
+            break
 
         else:
-            break
+            function_dictionary[user_input]()             # Action from function dictionary
 
 
 if __name__ == '__main__':

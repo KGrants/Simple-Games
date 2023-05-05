@@ -4,6 +4,7 @@ import names
 import random
 import sys
 import statistics
+import sql_queries as sqlq
 
 
 def first_screen():
@@ -75,168 +76,143 @@ def reset_season():
 
 
 def create_player():
-    team_id = int(input("Please provide team_id for which to create a player : ").strip())
-    first_name = names.get_first_name(gender="male")
-    last_name = names.get_last_name()
-    offence = random.randint(50, 100)
-    defence = random.randint(50, 100)
-    age = random.randint(16, 32)
-    potential = int(100 - random.randint(0, 50) * ((age**2)/32)/16)
-
-    cur.execute("""INSERT INTO Players
-                   (Name, Surname, Age, Offence, Defence, Potential, Team)
-                   VALUES
-                   ('%s', '%s', '%s', %s, %s, %s, %s)"""
-                   % (first_name, last_name, age, offence, defence, potential, team_id))
-    conn.commit()
-    print(f"{first_name} {last_name} was created successfully!")
-    print(f"Age = {age}\nOffence = {offence}\nDefence = {defence}\nPotential = {potential}\n")
-    return
+    team_id     = int(input("Please provide team_id for which to create a player : ").strip())
+    first_name  = names.get_first_name(gender="male")
+    last_name   = names.get_last_name()
+    offence     = random.randint(50, 100)
+    defence     = random.randint(50, 100)
+    age         = random.randint(16, 32)
+    potential   = int(100 - random.randint(0, 50) * ((age**2)/32)/16)
+    try:
+        cur.execute("""INSERT INTO Players
+                       (Name, Surname, Age, Offence, Defence, Potential, Team)
+                       VALUES
+                       ('%s', '%s', '%s', %s, %s, %s, %s)"""
+                       % (first_name, last_name, age, offence, defence, potential, team_id))
+        conn.commit()
+        print(f"{first_name} {last_name} was created successfully!")
+        print(f"Age = {age}\nOffence = {offence}\nDefence = {defence}\nPotential = {potential}\n")
+    except Exception as e:
+        print(f"Error creating player: {e}")
 
 
 def create_custom_player():
-    team_id = int(input("Team id:"))
-    first_name = input("Name:")
-    last_name = input("Surname:")
-    offence = int(input("Offence:"))
-    defence = int(input("Defence:"))
-    age = int(input("Age:"))
-    potential = int(input("Potential:"))
-
-    cur.execute("""INSERT INTO Players
-                   (Name, Surname, Age, Offence, Defence, Potential, Team)
-                   VALUES
-                   ('%s', '%s', '%s', %s, %s, %s, %s)"""
-                   % (first_name, last_name, age, offence, defence, potential, team_id))
-    conn.commit()
-    print(f"{first_name} {last_name} was created successfully!")
-    print(f"Age = {age}\nOffence = {offence}\nDefence = {defence}\nPotential = {potential}\n")
-    return
+    team_id     = int(input("Team id:"))
+    first_name  = input("Name:")
+    last_name   = input("Surname:")
+    offence     = int(input("Offence:"))
+    defence     = int(input("Defence:"))
+    age         = int(input("Age:"))
+    potential   = int(input("Potential:"))
+    try:
+        cur.execute("""INSERT INTO Players
+                       (Name, Surname, Age, Offence, Defence, Potential, Team)
+                       VALUES
+                       ('%s', '%s', '%s', %s, %s, %s, %s)"""
+                       % (first_name, last_name, age, offence, defence, potential, team_id))
+        conn.commit()
+        print(f"{first_name} {last_name} was created successfully!")
+        print(f"Age = {age}\nOffence = {offence}\nDefence = {defence}\nPotential = {potential}\n")
+    except Exception as e:
+        print(f"Error creating player: {e}")
 
 
 def show_players(team_id):
-    cur.execute("""SELECT * 
-                   FROM Players
-                   WHERE 1 = 1
-                   AND Team = %s""" % (team_id))
-    players = [i for i in cur.fetchall()]
+    players = sqlq.show_players_sql(team_id)
     for j in players:
         print(f"{j[1]} {j[2]} (id:{j[0]}) - age: {j[3]} off: {j[4]} def: {j[5]} pot: {j[6]}")
     if len(players) > 0:
-        off_avg = statistics.mean([x[4] for x in players])
-        def_avg = statistics.mean([x[5] for x in players])
-        pot_avg = statistics.mean([x[6] for x in players])
-        print(f"Team avg = off:{round(off_avg,2)} def:{round(def_avg,2)} pot: {round(pot_avg,2)}")
+        off_avg = round(statistics.mean([x[4] for x in players]),2)
+        def_avg = round(statistics.mean([x[5] for x in players]),2)
+        pot_avg = round(statistics.mean([x[6] for x in players]),2)
+        print(f"Team avg = off:{off_avg} def:{def_avg} pot: {pot_avg}")
     return
 
 
 def show_all_teams():
-    cur.execute("""SELECT id, name 
-                   FROM Teams
-                   WHERE 1 = 1
-                   AND valid = 1""")
-    teams = [i for i in cur.fetchall()]
+    teams = sqlq.show_all_teams_sql()
     for i in teams:
         print(f"\n{i[1]} (id = {i[0]}) :")
         show_players(i[0])
-    print(f"\n")
+    print()
     return
 
 
 def show_one_team():
-    cur.execute("""SELECT id, name 
-                   FROM Teams""")
-    teams = [i for i in cur.fetchall()]
+    teams = sqlq.show_one_team_sql()
     for i in teams:
         print(f"{i[0]} - {i[1]}:")
-
-    user_input = int(input("Please choose id of team you want to see players for: "))
-    team_name = [i[1] for i in teams if i[0] == user_input]
-    print(f"\n{team_name[0]} players:")
-    show_players(user_input)
-    return
+    try:
+        user_input = int(input("Please choose id of team you want to see players for: "))
+        team_name = [i[1] for i in teams if i[0] == user_input]
+        print(f"\n{team_name[0]} players:")
+        show_players(user_input)
+    except Exception as e:
+        print(f"Error: {e}")
 
 
 def drop_player():
     show_one_team()
-    drop_id = int(input("Please provide id of player that you want to drop: "))
-    # Make sure that there are team "Free Agents"
+    try:
+        drop_id = int(input("Please provide id of player that you want to drop: "))
+        sqlq.drop_player_sql(drop_id)
+        conn.commit()
+        print("Player has been released to Free Agents")
+    except Exception as e:
+        print(f"Error: {e}")
+
+
+def free_agents():
+    """Check if Free Agents exists, if not - creates"""
     cur.execute("""SELECT count(*)
-                   FROM Teams
-                   WHERE id = 999""")
-    free_agents = cur.fetchone()[0]
-    if free_agents == 0:
+                    FROM Teams
+                    WHERE id = 999""")
+    if cur.fetchone()[0] == 0:
         create_team("Free Agents", 9999)
-    cur.execute("""UPDATE Players
-                   SET Team = 999
-                   WHERE id = %s""" % (drop_id))
-    conn.commit()
-    print(f"Player has been released to Free Agents")
-    return
 
 
 def trade_players():
-    print("First player:")
-    f.show_one_team()
-    one_id = int(input("Please provide id of player that needs to be traded : "))
-    print("Second player:")
-    f.show_one_team()
-    two_id = int(input("Please provide id of player that needs to be traded : "))
-    cur.execute("""SELECT id, Team
-                   FROM Players 
-                   WHERE 1 = 1
-                   AND id = %s""" % (one_id))
-    one_team_id = cur.fetchone()[1]
+    try:
+        print("First player:")
+        show_one_team()
+        one_id = int(input("Please provide id of player that needs to be traded : "))
+        one_team_id = sqlq.get_trade_dets_sql(one_id)
 
-    cur.execute("""SELECT id, Team
-                   FROM Players 
-                   WHERE 1 = 1
-                   AND id = %s""" % (two_id))
-    two_team_id = cur.fetchone()[1]
+        print("Second player:")
+        show_one_team()
+        two_id = int(input("Please provide id of player that needs to be traded : "))
+        two_team_id = sqlq.get_trade_dets_sql(two_id)
 
+        sqlq.trade_players_sql(two_team_id, one_id)
+        sqlq.trade_players_sql(one_team_id, two_id)
+        conn.commit()
 
-    cur.execute("""UPDATE Players
-                   SET Team = %s
-                   WHERE id = %s""" % (two_team_id, one_id))
-    conn.commit()
-    cur.execute("""UPDATE Players
-                   SET Team = %s
-                   WHERE id = %s""" % (one_team_id, two_id))
-    conn.commit()
-    print(f"Trade has been successfully done!")
-    return
+        print("Trade has been successfully done!")
+    except Exception as e:
+        print(f"Error: {e}")
 
 
 def sign_player():
     print("Free Agents:")
     show_players(999)
+    try:
+        to_sign = int(input("Choose a free agent id to sign:"))
+        free_agents = sqlq.show_free_agents_sql()
 
-    to_sign = int(input("Choose a free agent id to sign:"))
-    cur.execute("""SELECT id 
-                   FROM Players
-                   WHERE 1 = 1
-                   AND team = 999""")
-    free_agents = [i[0] for i in cur.fetchall()]
-    if to_sign not in free_agents:
-        print("You can't sign a player who is not a free agent!")
-        return
+        if to_sign not in free_agents:
+            print("You can't sign a player who is not a free agent!")
+            return
 
-    cur.execute("""SELECT id, name 
-                   FROM Teams
-                   WHERE 1 = 1
-                   AND valid = 1
-                   AND id != 999""")
-    teams = [i for i in cur.fetchall()]
-    for i in teams:
-        print(f"\n{i[0]} - {i[1]}:")
-    print(f"\n")
-    to_team = int(input("Choose to which team sign this player:"))
+        teams = sqlq.show_all_teams_sql()
+        for i in teams:
+            print(f"{i[0]} - {i[1]}")
+        print(f"\n")
+        to_team = int(input("Choose to which team sign this player:"))
 
-    cur.execute("""UPDATE Players
-                   SET team = %s 
-                   WHERE id = %s""" % (to_team, to_sign))
-    conn.commit()
-    return
+        sqlq.sign_player_sql(to_team, to_sign)
+        conn.commit()
+    except Exception as e:
+        print(f"Error: {e}")
 
 
 def exit_app():

@@ -9,7 +9,7 @@ def main():
 
         function_dictionary = {1:f.create_team,           # Create a new team and write it to DB
                                2:f.create_player,         # Create a new player and write it to DB
-                               3:season_screen,            # Start new season
+                               3:season_screen,           # Start new season
                                4:f.show_all_teams,        # Shows all valid teams and players
                                5:f.show_one_team,         # Shows menu of all teams and then players of one team
                                6:f.drop_player,           # User can drop any player from any team
@@ -28,11 +28,11 @@ def season_screen():
     year = 2023
     season_round = 1
 
-    if sqlq.check_team_count() != 10:                        # To start the season we need to have exactly 10 valid teams
+    if sqlq.check_team_count() != 10:                     # To start the season we need to have exactly 10 valid teams
         se.wrong_team_count()
         return
 
-    if sqlq.check_player_count():                            # To start the season each team needs to have 5 valid players
+    if sqlq.check_player_count():                         # To start the season each team needs to have 5 valid players
         se.show_teams_above()
         return
 

@@ -128,3 +128,63 @@ def playoff_teams_sql():
                    ORDER BY 3 DESC
                    LIMIT 8""")
     return [i for i in cur.fetchall()]
+
+
+def show_players_sql(team_id):
+    cur.execute("""SELECT * 
+                   FROM Players
+                   WHERE 1 = 1
+                   AND Team = %s""" % (team_id))
+    return [i for i in cur.fetchall()]
+
+
+def show_all_teams_sql():
+    cur.execute("""SELECT id, name 
+                   FROM Teams
+                   WHERE 1 = 1
+                   AND valid = 1
+                   AND id != 999""")
+    return [i for i in cur.fetchall()]
+
+
+def show_one_team_sql():
+    cur.execute("""SELECT id, name 
+                   FROM Teams""")
+    return [i for i in cur.fetchall()]
+
+
+def drop_player_sql(drop_id):
+    cur.execute("""UPDATE Players
+                    SET Team = 999
+                    WHERE id = %s""" % (drop_id))
+    return
+
+
+def sign_player_sql(to_team, to_sign):
+    cur.execute("""UPDATE Players
+                   SET team = %s 
+                   WHERE id = %s""" % (to_team, to_sign))
+    return
+
+
+def get_trade_dets_sql(one_id):
+    cur.execute("""SELECT id, Team
+                   FROM Players 
+                   WHERE 1 = 1
+                   AND id = %s""" % (one_id))
+    return cur.fetchone()[1]
+
+
+def trade_players_sql(team_id, player_id):
+    cur.execute("""UPDATE Players
+                   SET Team = %s
+                   WHERE id = %s""" % (team_id, player_id))
+    return
+
+
+def show_free_agents_sql():
+    cur.execute("""SELECT id 
+                    FROM Players
+                    WHERE 1 = 1
+                    AND team = 999""")
+    return [i[0] for i in cur.fetchall()]

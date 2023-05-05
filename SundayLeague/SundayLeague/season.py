@@ -108,6 +108,9 @@ def playoffs():
         p = sqlq.playoff_teams_sql()
 
         print()
+        for i in range(3):
+            print(f"{p[(i**3 - i) % 4][1]} - {p[(i**3 - (6*i)**2 + 11 * i - 6)][1]}")
+
         print(f"{p[0][1]} - {p[7][1]}")
         print(f"{p[3][1]} - {p[4][1]}")
         print(f"{p[1][1]} - {p[6][1]}")
@@ -121,7 +124,6 @@ def playoffs():
         second_round.append(playoff_series(p[1][0],p[6][0]))
         second_round.append(playoff_series(p[2][0],p[5][0]))
         
-
         v = []
         for i in second_round:
             for j in p:
@@ -129,12 +131,11 @@ def playoffs():
                     v.append(j)
                     continue
         
-        print("SEMI-FINALS:")
+        print(f"\nSEMI-FINALS:")
         print(f"{v[0][1]} - {v[1][1]}")
         print(f"{v[2][1]} - {v[3][1]}")
 
-        print("Press any key to simulate semi-finals")
-        int(input(">").strip())
+        input("Press any key to simulate next round")
 
         third_round = []
         third_round.append(playoff_series(v[0][0],v[1][0]))
@@ -150,22 +151,19 @@ def playoffs():
         
         print("FINALS:")
         print(f"{x[0][1]} - {x[1][1]}")
-        print("Press 1 to simulate finals")
-        int(input(">").strip())
-        playoff_series(x[0][0],x[1][0])
 
+        input("Press any key to simulate next round")
+        playoff_series(x[0][0],x[1][0])
 
         return
         
 
 def playoff_series(team_a, team_b):
+    """Simulates series till 4 wins and returns winner team id"""
     wins_a = 0
     wins_b = 0
 
     while True:
-        if wins_a == 4 or wins_b == 4:
-            break;
-
         power = sqlq.team_power(team_a, team_b)
         home_points = int(100*(1+((power[0][1]-power[1][2])/100))*random.uniform(0.85,1.15))
         away_points = int(100*(1-((power[1][1]-power[0][2])/100))*random.uniform(0.85,1.15))
@@ -175,12 +173,11 @@ def playoff_series(team_a, team_b):
 
         winner = team_a if home_points > away_points else team_b
 
-        if winner == team_a:
-            wins_a+=1
-            continue
-        else:
-            wins_b+=1
-            continue
+        wins_a += (winner == team_a)
+        wins_b += (winner == team_b)
+
+        if wins_a == 4 or wins_b == 4:
+            break
 
     team_name = sqlq.get_team_name_sql(winner)
     print(f"{team_name} won the series ({wins_a if wins_a>wins_b else wins_b}:{wins_a if wins_a<wins_b else wins_b})")

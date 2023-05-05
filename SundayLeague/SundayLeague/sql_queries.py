@@ -10,7 +10,7 @@ def mvp_query():
     return [i[0] for i in cur.fetchall()]
 
 
-def top_scorers_sql():
+def top_scorers_sql(year):
     cur.execute("""WITH HighScorers AS
                    (
                    SELECT 
@@ -22,24 +22,24 @@ def top_scorers_sql():
                    ROW_NUMBER() OVER(PARTITION BY P.id) as RowNum
                    FROM Players P
                    LEFT JOIN Player_Score PS ON PS.Player_id = P.id
+                   INNER JOIN Games G on G.id = PS.Game_id AND G.Year = %s
                    LEFT JOIN Teams T ON T.id = P.Team
                    ORDER BY 5 DESC
                    )
                    SELECT * 
                    FROM HighScorers
                    WHERE RowNum = 1
-                   LIMIT 5
-                   """)
+                   LIMIT 5""" % (year))
     return
 
 
-def team_stand_sql():
+def team_stand_sql(year):
     cur.execute("""SELECT T.Name, COUNT(G.id)*3
                    FROM Teams T
-                   LEFT JOIN Games G ON G.Winner = T.id
-                   WHERE id != 999
+                   LEFT JOIN Games G ON G.Winner = T.id AND G.Year = %s
+                   WHERE T.id != 999
                    GROUP BY T.Name
-                   ORDER BY 2 DESC""")
+                   ORDER BY 2 DESC""" % (year))
     return
 
 
@@ -188,3 +188,10 @@ def show_free_agents_sql():
                     WHERE 1 = 1
                     AND team = 999""")
     return [i[0] for i in cur.fetchall()]
+
+
+def create_team_sql(name, founded):
+    cur.execute("""INSERT INTO Teams (Name, Founded)
+                   VALUES ('%s', %s);"""
+                   % (name, founded))
+    return

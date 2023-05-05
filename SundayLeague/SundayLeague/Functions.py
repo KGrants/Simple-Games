@@ -39,43 +39,41 @@ def season_menu():
                "5. Show all teams",
                "6. Exit"]
     print("", *options, sep="\n")
-
-    user_input = input(">").strip()
-    if user_input in "123456":
-        return int(user_input)
-    else:
-        return 6
+    try:
+        user_input = int(input(">").strip())
+        return user_input if user_input in [1,2,3,4,5,6] else 6
+    except Exception as e:
+        print(f"Wrong user input: {e}")
 
 
 def create_team():
     """Create a new team and write it to DB"""
-    name = input("Please provide team name : ").strip()
-    founded = input("Please provide year when team was founded (YYYY) : ").strip()
-    if founded.isnumeric():
-        founded = int(founded)
-    else:
-        print("You did not add a valid year.")
-        return
-    if name != "Free Agents":
-        cur.execute("""INSERT INTO Teams (Name, Founded)
-                       VALUES ('%s', %s);"""
-                       % (name, founded))
-    else:
-        cur.execute("""INSERT INTO Teams (Id, Name, Founded)
-                       VALUES (999, '%s', %s);"""
-                       % (name, founded))
-    conn.commit()
-    print(f"{name} was created successfully!\n")
-    return
+
+    try:
+        name = input("Please provide team name : ").strip()
+        founded = int(input("Please provide year when team was founded (YYYY) : ").strip())
+
+        if name != "Free Agents":
+            sqlq.create_team_sql(name, founded)
+        else:
+            create_team("Free Agents", 9999)
+        conn.commit()
+        print(f"{name} was created successfully!\n")
+    except Exception as e:
+        print(f"Error creating team: {e}")
 
 
 def reset_season():
+    """if we start a new game, delete entries in Games and Player_Score"""
+
     cur.execute("""DELETE FROM Games""")
     cur.execute("""DELETE FROM Player_Score""")
     conn.commit()
 
 
 def create_player():
+    """Creates new random player"""
+
     team_id     = int(input("Please provide team_id for which to create a player : ").strip())
     first_name  = names.get_first_name(gender="male")
     last_name   = names.get_last_name()
@@ -97,14 +95,15 @@ def create_player():
 
 
 def create_custom_player():
-    team_id     = int(input("Team id:"))
-    first_name  = input("Name:")
-    last_name   = input("Surname:")
-    offence     = int(input("Offence:"))
-    defence     = int(input("Defence:"))
-    age         = int(input("Age:"))
-    potential   = int(input("Potential:"))
+    """Creates new custom player"""
     try:
+        team_id     = int(input("Team id:"))
+        first_name  = input("Name:")
+        last_name   = input("Surname:")
+        offence     = int(input("Offence:"))
+        defence     = int(input("Defence:"))
+        age         = int(input("Age:"))
+        potential   = int(input("Potential:"))
         cur.execute("""INSERT INTO Players
                        (Name, Surname, Age, Offence, Defence, Potential, Team)
                        VALUES
@@ -118,6 +117,8 @@ def create_custom_player():
 
 
 def show_players(team_id):
+    """Displays all players for specific team"""
+
     players = sqlq.show_players_sql(team_id)
     for j in players:
         print(f"{j[1]} {j[2]} (id:{j[0]}) - age: {j[3]} off: {j[4]} def: {j[5]} pot: {j[6]}")
@@ -130,6 +131,8 @@ def show_players(team_id):
 
 
 def show_all_teams():
+    """Displays all teams and players"""
+
     teams = sqlq.show_all_teams_sql()
     for i in teams:
         print(f"\n{i[1]} (id = {i[0]}) :")
@@ -139,6 +142,7 @@ def show_all_teams():
 
 
 def show_one_team():
+    """Displays one team and players"""
     teams = sqlq.show_one_team_sql()
     for i in teams:
         print(f"{i[0]} - {i[1]}:")
@@ -152,6 +156,8 @@ def show_one_team():
 
 
 def drop_player():
+    """Release one player from any team to free agents"""
+
     show_one_team()
     try:
         drop_id = int(input("Please provide id of player that you want to drop: "))
@@ -164,6 +170,7 @@ def drop_player():
 
 def free_agents():
     """Check if Free Agents exists, if not - creates"""
+
     cur.execute("""SELECT count(*)
                     FROM Teams
                     WHERE id = 999""")
@@ -172,6 +179,7 @@ def free_agents():
 
 
 def trade_players():
+    """Exchanges two players between two teams"""
     try:
         print("First player:")
         show_one_team()
@@ -193,6 +201,8 @@ def trade_players():
 
 
 def sign_player():
+    """Assign a player from free agents to any team"""
+
     print("Free Agents:")
     show_players(999)
     try:
@@ -216,6 +226,8 @@ def sign_player():
 
 
 def exit_app():
+    """Close connection and exit application"""
+
     print("\nBye!")
     conn.close()
     sys.exit()

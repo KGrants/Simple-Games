@@ -4,7 +4,6 @@ import random
 import itertools
 import statistics_SL as s
 import sql_queries as sqlq
-import sys
 
 
 def wrong_team_count():
@@ -21,8 +20,9 @@ def show_teams_above():
     return
 
 
-def game(home_team, away_team):
-    # calculating points for both teams based on 30% random chance and offence/defence ratio
+def game(home_team, away_team, year):
+    """Simulating a single game, distributing points between players, writting to DB"""
+
     power = sqlq.team_power(home_team, away_team)
     home_points = int(100*(1+((power[0][1]-power[1][2])/100))*random.uniform(0.88,1.18))
     away_points = int(100*(1-((power[1][1]-power[0][2])/100))*random.uniform(0.85,1.15))
@@ -36,9 +36,9 @@ def game(home_team, away_team):
 
     # Inserting teams results in Games table
     cur.execute("""INSERT INTO Games 
-                   (Home_Team, Away_Team, Home_Points, Away_Points, Winner)
+                   (Year, Home_Team, Away_Team, Home_Points, Away_Points, Winner)
                    VALUES
-                   (%s, %s, %s, %s, %s)""" % (home_team, away_team, home_points, away_points, winner))
+                   (%s, %s, %s, %s, %s, %s)""" % (year, home_team, away_team, home_points, away_points, winner))
     conn.commit()
 
     # Extracting game_id so that we can link player stats from Player_Score table
@@ -82,21 +82,21 @@ def generate_all_games():
     return list(itertools.permutations(team_list,2))
 
 
-def play_round(game_list):
+def play_round(game_list, year):
     games = game_list
     game_count=0
     teams_played = []
     for i in games:
         if i[0] not in teams_played and i[1] not in teams_played:
-            game(int(i[0]), int(i[1]))
+            game(int(i[0]), int(i[1]), year)
             teams_played.append(i[0])
             teams_played.append(i[1])
             game_count += 1
             games.remove(i)
         if game_count == 5:
             break
-    s.show_standings()
-    s.show_top_scorers()
+    s.show_standings(year)
+    s.show_top_scorers(year)
     return games
 
 
@@ -108,15 +108,12 @@ def playoffs():
         p = sqlq.playoff_teams_sql()
 
         print()
-        for i in range(3):
-            print(f"{p[(i**3 - i) % 4][1]} - {p[(i**3 - (6*i)**2 + 11 * i - 6)][1]}")
-
         print(f"{p[0][1]} - {p[7][1]}")
         print(f"{p[3][1]} - {p[4][1]}")
         print(f"{p[1][1]} - {p[6][1]}")
         print(f"{p[2][1]} - {p[5][1]}")
         
-        input("Press any key to simulate next round")
+        input(f"\nPress Enter to simulate next round\n")
 
         second_round = []
         second_round.append(playoff_series(p[0][0],p[7][0]))
@@ -135,7 +132,7 @@ def playoffs():
         print(f"{v[0][1]} - {v[1][1]}")
         print(f"{v[2][1]} - {v[3][1]}")
 
-        input("Press any key to simulate next round")
+        input(f"\nPress Enter to simulate next round\n")
 
         third_round = []
         third_round.append(playoff_series(v[0][0],v[1][0]))
@@ -152,7 +149,7 @@ def playoffs():
         print("FINALS:")
         print(f"{x[0][1]} - {x[1][1]}")
 
-        input("Press any key to simulate next round")
+        input(f"\nPress Enter to simulate next round\n")
         playoff_series(x[0][0],x[1][0])
 
         return

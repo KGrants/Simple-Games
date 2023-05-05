@@ -50,12 +50,18 @@ def season_screen():
         if season_round == 19:                            # If 18 rounds are done, let's go to playoffs
             print(f"\n{year} playoffs!")
             se.playoffs()
+            # se.mvp_growth()                             # Need to implement
+            # se.player_development()                     # Need to implement
+            # se.random_development()                     # Need to implement
+            season_round = 1
+            year += 1
+            start_new_season = False
 
         print(f"\n{year} season, round {season_round}:")
         user_input = f.season_menu()                      # season screen alows the user to choose between actions
 
         if user_input == 1:                               # Simulates games of one round and displays results
-            games_list = se.play_round(games_list)        #
+            games_list = se.play_round(games_list, year)  #
             season_round += 1                             # 
 
         elif user_input == 6:                             # break back to main screen
@@ -77,7 +83,7 @@ if __name__ == '__main__':
 # Create new table where to store historical regular season and playoff results (now I need to add some data to it)
 # New Season
 
-# Start a new game or continue previous one (new game would drop data in Games and Player_Score tables)
-# Random player has spent a lot of time in training camp
-# At the end of season potential age decreases potential, potential affects offence and defence
-# MVP gets a boost to potential at the end of season
+# Start a new game or continue previous one (new game would drop data in Games and Player_Score tables) - test start_new_season
+# Random player has spent a lot of time in training camp - implement random_development()
+# At the end of season potential age decreases potential, potential affects offence and defence - implement player_development()
+# MVP gets a boost to potential at the end of season - implement mvp_growth()  

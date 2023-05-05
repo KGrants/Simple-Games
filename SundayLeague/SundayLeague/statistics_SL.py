@@ -1,9 +1,9 @@
 from SQL import cur
 import sql_queries as sqlq
 
-def show_standings():
+def show_standings(year):
     print("\nCurrent league standings:")
-    sqlq.team_stand_sql()
+    sqlq.team_stand_sql(year)
     place = 1
     for i in cur.fetchall():
         print(f"{place}. {i[0]} = {i[1]} pts")

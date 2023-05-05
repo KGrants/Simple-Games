@@ -154,76 +154,9 @@ def play_round(game_list):
 
 
 
-def season_screen():
-
-    # To start the season we need to have exactly 10 valid teams
-    if check_team_count() != 10:
-        wrong_team_count()
-        return
-
-    # To start the season each team needs to have 5 valid players
-    if check_player_count():
-        show_teams_above()
-        return
-
-    games_list = generate_all_games()
-    year = 2023
-    season_round = 1
-    cur.execute("""DELETE FROM Games""")
-    cur.execute("""DELETE FROM Player_Score""")
-    conn.commit()
-
-
-    while True:
-
-        if season_round == 19:
-            print("\nRegular Season MVP:")
-            s.mvp()
-            print(f"\n{year} playoffs!")
-            playoffs()
-
-        print(f"\n{year} season, round {season_round}:")
-        options = ["1. Advance one Round", 
-                   "2. Trade player", 
-                   "3. Cut player", 
-                   "4. Sign free agent",
-                   "5. Show all teams",
-                   "5. Exit"]
-        print("", *options, sep="\n")   # Print menu
-        user_input = int(input(">").strip())  # Get user input
-
-        if user_input == 1:
-
-            games_list = play_round(games_list)
-            season_round += 1
-            s.show_standings()
-            s.show_top_scorers()
-            
-
-        elif user_input == 2:
-            print("First player:")
-            show_one_team()
-            first_to_trade = int(input("Please provide id of player that needs to be traded : "))
-            print("Second player:")
-            show_one_team()
-            second_to_trade = int(input("Please provide id of player that needs to be traded : "))
-            trade_players(first_to_trade, second_to_trade)
-
-        elif user_input == 3:
-            drop_player()
-
-        elif user_input == 4:
-            sign_player()
-
-        elif user_input == 5:
-            show_all_teams()
-
-        else:
-            break
-
-
-
 def playoffs():
+    print("\nRegular Season MVP:")
+    s.mvp()
     while True:
         cur.execute("""SELECT T.id, T.Name, COUNT(G.id)*3
                 FROM Teams T

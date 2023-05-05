@@ -28,6 +28,24 @@ def first_screen():
         return 9
 
 
+def season_menu():
+    """Prints out season screen menu and obtains users choice"""
+
+    options = ["1. Advance one Round", 
+               "2. Trade player", 
+               "3. Cut player", 
+               "4. Sign free agent",
+               "5. Show all teams",
+               "5. Exit"]
+    print("", *options, sep="\n")
+
+    user_input = input(">").strip()
+    if user_input in "123456":
+        return int(user_input)
+    else:
+        return 6
+
+
 def create_team():
     """Create a new team and write it to DB"""
     name = input("Please provide team name : ").strip()
@@ -48,6 +66,12 @@ def create_team():
     conn.commit()
     print(f"{name} was created successfully!\n")
     return
+
+
+def reset_season():
+    cur.execute("""DELETE FROM Games""")
+    cur.execute("""DELETE FROM Player_Score""")
+    conn.commit()
 
 
 def create_player():
@@ -151,7 +175,13 @@ def drop_player():
     return
 
 
-def trade_players(one_id, two_id):
+def trade_players():
+    print("First player:")
+    f.show_one_team()
+    one_id = int(input("Please provide id of player that needs to be traded : "))
+    print("Second player:")
+    f.show_one_team()
+    two_id = int(input("Please provide id of player that needs to be traded : "))
     cur.execute("""SELECT id, Team
                    FROM Players 
                    WHERE 1 = 1

@@ -86,6 +86,7 @@ def play_round(game_list, year):
     games = game_list
     game_count=0
     teams_played = []
+    random.shuffle(games)
     for i in games:
         if i[0] not in teams_played and i[1] not in teams_played:
             game(int(i[0]), int(i[1]), year)

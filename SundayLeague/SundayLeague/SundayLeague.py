@@ -81,6 +81,8 @@ if __name__ == '__main__':
 
 # Current To-Do list: 
 
+# Review game engine (From testing seams that one team always wins, but another team that is pretty much the same strenght, looses)
+
 # Playoffs (need to make it not that ugly)
 # Create new table where to store historical regular season and playoff results (now I need to add some data to it)
 # New Season

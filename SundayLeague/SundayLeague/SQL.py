@@ -24,7 +24,7 @@ cur.execute('''CREATE TABLE IF NOT EXISTS Players
 cur.execute('''CREATE TABLE IF NOT EXISTS Games
             (id INTEGER PRIMARY KEY AUTOINCREMENT,
             Year INTEGER,
-            Game_Type TEXT DEFAULT 'R',
+            Game_Type TEXT,
             Home_Team INTEGER,
             Away_Team INTEGER,
             Home_Points INTEGER DEFAULT 0,

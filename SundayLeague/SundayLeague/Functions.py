@@ -68,7 +68,7 @@ def reset_season():
 
     cur.execute("""DELETE FROM Games""")
     cur.execute("""DELETE FROM Player_Score""")
-    # cur.execute("""DROP TABLE Games""") testing purposes
+    # cur.execute("""DROP TABLE Games""") # testing purposes
     conn.commit()
 
 

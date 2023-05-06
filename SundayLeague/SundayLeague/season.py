@@ -20,7 +20,7 @@ def show_teams_above():
     return
 
 
-def game(home_team, away_team, year):
+def game(home_team, away_team, year, g_type):
     """Simulating a single game, distributing points between players, writting to DB"""
 
     power = sqlq.team_power(home_team, away_team)
@@ -36,9 +36,9 @@ def game(home_team, away_team, year):
 
     # Inserting teams results in Games table
     cur.execute("""INSERT INTO Games 
-                   (Year, Home_Team, Away_Team, Home_Points, Away_Points, Winner)
+                   (Year, Game_Type, Home_Team, Away_Team, Home_Points, Away_Points, Winner)
                    VALUES
-                   (%s, %s, %s, %s, %s, %s)""" % (year, home_team, away_team, home_points, away_points, winner))
+                   (%s, '%s', %s, %s, %s, %s, %s)""" % (year, g_type, home_team, away_team, home_points, away_points, winner))
     conn.commit()
 
     # Extracting game_id so that we can link player stats from Player_Score table
@@ -83,22 +83,26 @@ def generate_all_games():
 
 
 def play_round(game_list, year):
-    games = game_list
-    game_count=0
-    teams_played = []
-    random.shuffle(games)
-    for i in games:
-        if i[0] not in teams_played and i[1] not in teams_played:
-            game(int(i[0]), int(i[1]), year)
-            teams_played.append(i[0])
-            teams_played.append(i[1])
-            game_count += 1
-            games.remove(i)
-        if game_count == 5:
-            break
+    for i in game_list:
+        game(i[0], i[1], year, "R")
     s.show_standings(year)
     s.show_top_scorers(year)
-    return games
+    return 
+
+
+def make_day(num_teams, day):
+    lst = list(range(1, num_teams + 1))
+    day %= (num_teams - 1) 
+    if day:                
+        lst = lst[:1] + lst[-day:] + lst[1:-day]
+    half = num_teams // 2
+    return list(zip(lst[:half], lst[half:][::-1]))
+
+
+def make_schedule(num_teams):
+    schedule = [make_day(num_teams, day) for day in range(num_teams - 1)]
+    swapped = [[(away, home) for home, away in day] for day in schedule]
+    return schedule + swapped
 
 
 def playoffs():
@@ -158,19 +162,17 @@ def playoff_series(team_a, team_b):
     """Simulates series till 4 wins and returns winner team id"""
     wins_a = 0
     wins_b = 0
+    year = cur.execute("""SELECT MAX(Year) FROM Games""").fetchone()[0]
+    game_count = 0
+    series = "1100101"
 
     while True:
-        power = sqlq.team_power(team_a, team_b)
-        home_points = int(100*(1+((power[0][1]-power[1][2])/100))*random.uniform(0.85,1.15))
-        away_points = int(100*(1-((power[1][1]-power[0][2])/100))*random.uniform(0.85,1.15))
-
-        if home_points == away_points:
-            home_points += 1 if random.random() < 0.5 else -1
-
-        winner = team_a if home_points > away_points else team_b
+        game(team_a if series[game_count] == '1' else team_b, team_b if series[game_count] == '1' else team_a, year, "P")
+        winner = cur.execute("""SELECT Winner from Games ORDER BY id DESC LIMIT 1""").fetchone()[0]
 
         wins_a += (winner == team_a)
         wins_b += (winner == team_b)
+        game_count += 1
 
         if wins_a == 4 or wins_b == 4:
             break

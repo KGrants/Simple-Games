@@ -24,7 +24,7 @@ def main():
 def season_screen():
 
     start_new_season = True
-    games_list = se.generate_all_games()
+    games_list = se.make_schedule(10)
     year = 2023
     season_round = 1
 
@@ -63,7 +63,7 @@ def season_screen():
         user_input = f.season_menu()                      # season screen alows the user to choose between actions
 
         if user_input == 1:                               # Simulates games of one round and displays results
-            games_list = se.play_round(games_list, year)  #
+            se.play_round(games_list[season_round-1], year)      #
             season_round += 1                             # 
 
         elif user_input == 6:                             # break back to main screen
@@ -81,11 +81,10 @@ if __name__ == '__main__':
 
 # Current To-Do list: 
 
-# Review game engine (From testing seams that one team always wins, but another team that is pretty much the same strenght, looses)
-
 # Playoffs (need to make it not that ugly)
 # Create new table where to store historical regular season and playoff results (now I need to add some data to it)
 # New Season
+# Write Playoff game to DB with P tag
 
 # Start a new game or continue previous one (new game would drop data in Games and Player_Score tables) - test start_new_season
 # Random player has spent a lot of time in training camp - implement random_development()

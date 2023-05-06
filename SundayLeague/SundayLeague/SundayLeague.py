@@ -48,6 +48,8 @@ def season_screen():
     while True:
 
         if season_round == 19:                            # If 18 rounds are done, let's go to playoffs
+            print("\nRegular Season MVP:")
+            s.mvp(year)
             print(f"\n{year} playoffs!")
             se.playoffs()
             # se.mvp_growth()                             # Need to implement

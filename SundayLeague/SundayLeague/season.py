@@ -101,8 +101,6 @@ def play_round(game_list, year):
 
 
 def playoffs():
-    print("\nRegular Season MVP:")
-    s.mvp()
 
     while True:
         p = sqlq.playoff_teams_sql()

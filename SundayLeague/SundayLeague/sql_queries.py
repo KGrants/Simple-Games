@@ -195,3 +195,10 @@ def create_team_sql(name, founded):
                    VALUES ('%s', %s);"""
                    % (name, founded))
     return
+
+
+def get_last_game_id_sql():
+    cur.execute("""SELECT * 
+                   FROM Games
+                   ORDER BY 1 DESC""")
+    return cur.fetchone()[0]

@@ -49,10 +49,10 @@ def season_screen():
 
         if season_round == 19:                            # If 18 rounds are done, let's go to playoffs
             print("\nRegular Season MVP:")
-            s.mvp(year)
+            print(s.mvp(year)[0])
             print(f"\n{year} playoffs!")
             se.playoffs()
-            # se.mvp_growth()                             # Need to implement
+            se.mvp_growth(year)                           # Increase Offence and Defence of MVP
             # se.player_development()                     # Need to implement
             # se.random_development()                     # Need to implement
             season_round = 1
@@ -81,12 +81,11 @@ if __name__ == '__main__':
 
 # Current To-Do list: 
 
-# Playoffs (need to make it not that ugly)
-# Create new table where to store historical regular season and playoff results (now I need to add some data to it)
-# New Season
-# Write Playoff game to DB with P tag
-
+# update team standings to have point difference as second order by item
+# How to display historic results
 # Start a new game or continue previous one (new game would drop data in Games and Player_Score tables) - test start_new_season
 # Random player has spent a lot of time in training camp - implement random_development()
 # At the end of season potential age decreases potential, potential affects offence and defence - implement player_development()
 # MVP gets a boost to potential at the end of season - implement mvp_growth()  
+# Generate new players
+# Draft new players each season

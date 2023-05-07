@@ -42,10 +42,7 @@ def game(home_team, away_team, year, g_type):
     conn.commit()
 
     # Extracting game_id so that we can link player stats from Player_Score table
-    cur.execute("""SELECT * 
-                   FROM Games
-                   ORDER BY 1 DESC""")
-    game_id = cur.fetchone()[0]
+    game_id = sqlq.get_last_game_id_sql()
 
     # Generating individual points for all players and inserting them in Player_Score table.
     h_player_points = point_distribution(home_points,home_team)
@@ -180,5 +177,17 @@ def playoff_series(team_a, team_b):
     team_name = sqlq.get_team_name_sql(winner)
     print(f"{team_name} won the series ({wins_a if wins_a>wins_b else wins_b}:{wins_a if wins_a<wins_b else wins_b})")
     return winner
+
+
+def mvp_growth(year):
+    mvp = s.cur(year)[2]
+
+    cur.execure("""UPDATE Players 
+                   SET 
+                   Offence = CASE Offence WHEN Offence + 5 > 100 THEN 100 ELSE Offence +5 END,
+	               Defence = CASE Defence WHEN Defence + 5 > 100 THEN 100 ELSE Defence +5 END
+                   WHERE id = 33 %s""" % (mvp))
+    conn.commit()
+
 
 

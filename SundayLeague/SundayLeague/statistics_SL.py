@@ -22,22 +22,21 @@ def show_top_scorers(year):
 
 
 def mvp(year):
-    mvp_winner = ("",0)
+    mvp_winner = ("",0,0)
     winner_teams = sqlq.mvp_query()
     sqlq.top_scorers_sql(year)
 
     for i in cur.fetchall():
         if i[3] == winner_teams[0] and i[4]*1.2>mvp_winner[1]:
-            mvp_winner = (f"{i[1]} {i[2]}", int(i[4]*1.2))
+            mvp_winner = (f"{i[1]} {i[2]}", int(i[4]*1.2), int(i[0])
 
         elif i[3] == winner_teams[1] and i[4]*1.15>mvp_winner[1]:
-            mvp_winner = (f"{i[1]} {i[2]}", int(i[4]*1.15))
+            mvp_winner = (f"{i[1]} {i[2]}", int(i[4]*1.15), int(i[0])
 
         elif i[3] == winner_teams[2] and i[4]*1.1>mvp_winner[1]:
-            mvp_winner = (f"{i[1]} {i[2]}", int(i[4]*1.1))
+            mvp_winner = (f"{i[1]} {i[2]}", int(i[4]*1.1), int(i[0])
 
         elif i[4]>mvp_winner[1]:
-                mvp_winner = (f"{i[1]} {i[2]}", int(i[4]))
+                mvp_winner = (f"{i[1]} {i[2]}", int(i[4]), int(i[0])
 
-    print(f"{mvp_winner[0]}")
-    return
+    return mvp_winner

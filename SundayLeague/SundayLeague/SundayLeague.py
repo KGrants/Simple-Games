@@ -53,7 +53,7 @@ def season_screen():
             print(f"\n{year} playoffs!")
             se.playoffs()
             se.mvp_growth(year)                           # Increase Offence and Defence of MVP
-            # se.player_development()                     # Need to implement
+            se.player_development()                       # Changes Offence and defence based on potential, potential based on age
             # se.random_development()                     # Need to implement
             season_round = 1
             year += 1
@@ -85,7 +85,5 @@ if __name__ == '__main__':
 # How to display historic results
 # Start a new game or continue previous one (new game would drop data in Games and Player_Score tables) - test start_new_season
 # Random player has spent a lot of time in training camp - implement random_development()
-# At the end of season potential age decreases potential, potential affects offence and defence - implement player_development()
-# MVP gets a boost to potential at the end of season - implement mvp_growth()  
 # Generate new players
 # Draft new players each season

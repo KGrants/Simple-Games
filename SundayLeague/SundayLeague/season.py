@@ -188,6 +188,17 @@ def mvp_growth(year):
 	               Defence = CASE Defence WHEN Defence + 5 > 100 THEN 100 ELSE Defence +5 END
                    WHERE id = 33 %s""" % (mvp))
     conn.commit()
+    return
 
+
+def player_development():
+    cur.execure("""UPDATE Players 
+                   SET
+                   Offence   = Offence + cast((cast(abs((random() % 100)) as float)/100)*(CASE WHEN 70 - Potential < 0 THEN Potential - 70 ELSE 70 - Potential END) as INTEGER),
+                   Defence   = Defence + cast((cast(abs((random() % 100)) as float)/100)*(CASE WHEN 70 - Potential < 0 THEN Potential - 70 ELSE 70 - Potential END) as INTEGER),
+                   Potential = CASE WHEN Age < 23 THEN Potential ELSE CASE WHEN Age < 27 THEN Potential - 5 ELSE Potential - 10 END END,
+                   Age = Age + 1""")
+    conn.commit()
+    return
 
 

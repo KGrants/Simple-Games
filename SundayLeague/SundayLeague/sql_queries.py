@@ -34,12 +34,28 @@ def top_scorers_sql(year):
 
 
 def team_stand_sql(year):
-    cur.execute("""SELECT T.Name, COUNT(G.id)*3
+    cur.execute("""SELECT T.Name, COUNT(G.id)*3, POINTS.DIFF
                    FROM Teams T
                    LEFT JOIN Games G ON G.Winner = T.id AND G.Year = %s
-                   WHERE T.id != 999
+                   INNER JOIN (select T.id as ID, 
+				                      sum(CASE 
+				 	                      WHEN T.id = G.Home_Team 
+					                      THEN G.Home_Points-G.Away_Points 
+					                      ELSE 
+						                    CASE 
+						                    WHEN T.id = G.Away_Team 
+						                    THEN G.Away_Points-G.Home_Points 
+						                    ELSE 0 
+						                    END 
+					                      END) as DIFF 
+		                       FROM Teams T 
+		                       Left Join Games G on (G.Home_Team = T.id or G.Away_Team = T.id) and G.Year = 2023 and G.Game_Type = 'R'
+		                       Group By T.id) as POINTS on POINTS.ID = T.id
+                   WHERE 1 = 1
+                   AND T.id != 999
+                   AND G.Game_Type = 'R'
                    GROUP BY T.Name
-                   ORDER BY 2 DESC""" % (year))
+                   ORDER BY COUNT(G.id)*3 DESC, POINTS.DIFF DESC""" % (year))
     return
 
 

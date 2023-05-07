@@ -180,7 +180,7 @@ def playoff_series(team_a, team_b):
 
 
 def mvp_growth(year):
-    mvp = s.cur(year)[2]
+    mvp = s.mvp(year)[2]
 
     cur.execure("""UPDATE Players 
                    SET 

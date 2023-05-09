@@ -102,10 +102,10 @@ def make_schedule(num_teams):
     return schedule + swapped
 
 
-def playoffs():
+def playoffs(year):
 
     while True:
-        p = sqlq.playoff_teams_sql()
+        p = sqlq.playoff_teams_sql(year)
 
         print()
         print(f"{p[0][1]} - {p[7][1]}")
@@ -182,22 +182,28 @@ def playoff_series(team_a, team_b):
 def mvp_growth(year):
     mvp = s.mvp(year)[2]
 
-    cur.execure("""UPDATE Players 
+    cur.execute("""UPDATE Players 
                    SET 
                    Offence = CASE Offence WHEN Offence + 5 > 100 THEN 100 ELSE Offence +5 END,
 	               Defence = CASE Defence WHEN Defence + 5 > 100 THEN 100 ELSE Defence +5 END
-                   WHERE id = 33 %s""" % (mvp))
+                   WHERE id = %s""" % (mvp))
     conn.commit()
     return
 
 
 def player_development():
-    cur.execure("""UPDATE Players 
+    cur.execute("""UPDATE Players 
                    SET
-                   Offence   = Offence + cast((cast(abs((random() % 100)) as float)/100)*(CASE WHEN 70 - Potential < 0 THEN Potential - 70 ELSE 70 - Potential END) as INTEGER),
-                   Defence   = Defence + cast((cast(abs((random() % 100)) as float)/100)*(CASE WHEN 70 - Potential < 0 THEN Potential - 70 ELSE 70 - Potential END) as INTEGER),
+                   Offence   = Offence + cast((cast(abs((random() % 100)) as float)/100)*(Potential-70) as INTEGER),
+                   Defence   = Defence + cast((cast(abs((random() % 100)) as float)/100)*(Potential-70) as INTEGER),
                    Potential = CASE WHEN Age < 23 THEN Potential ELSE CASE WHEN Age < 27 THEN Potential - 5 ELSE Potential - 10 END END,
                    Age = Age + 1""")
+    conn.commit()
+    cur.execute("""UPDATE Players 
+                   SET
+                   Offence   = CASE WHEN Offence > 100 THEN 100 ELSE Offence END,
+                   Defence   = CASE WHEN Defence > 100 THEN 100 ELSE Defence END,
+                   Potential = CASE WHEN Potential < 0 THEN 0 ELSE Potential END""")
     conn.commit()
     return
 

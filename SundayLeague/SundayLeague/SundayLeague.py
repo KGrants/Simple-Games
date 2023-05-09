@@ -50,8 +50,11 @@ def season_screen():
         if season_round == 19:                            # If 18 rounds are done, let's go to playoffs
             print("\nRegular Season MVP:")
             print(s.mvp(year)[0])
+            # print(f"\n{year} Most Improved Player:")    # Need to implement
+            # print(s.mvp(year)[0])                       # Need to implement
+
             print(f"\n{year} playoffs!")
-            se.playoffs()
+            se.playoffs(year)
             se.mvp_growth(year)                           # Increase Offence and Defence of MVP
             se.player_development()                       # Changes Offence and defence based on potential, potential based on age
             # se.random_development()                     # Need to implement
@@ -87,3 +90,4 @@ if __name__ == '__main__':
 # Random player has spent a lot of time in training camp - implement random_development()
 # Generate new players
 # Draft new players each season
+# cancel of trading signing or dropping players

@@ -105,13 +105,14 @@ def make_schedule(num_teams):
 def playoffs(year):
 
     while True:
-        p = sqlq.playoff_teams_sql(year)
+        sqlq.team_stand_sql(year)
+        p = [i[0] for i in cur.fetchmany(8)]
 
         print()
-        print(f"{p[0][1]} - {p[7][1]}")
-        print(f"{p[3][1]} - {p[4][1]}")
-        print(f"{p[1][1]} - {p[6][1]}")
-        print(f"{p[2][1]} - {p[5][1]}")
+        print(f"{p[0]} - {p[7]}")
+        print(f"{p[3]} - {p[4]}")
+        print(f"{p[1]} - {p[6]}")
+        print(f"{p[2]} - {p[5]}")
         
         input(f"\nPress Enter to simulate next round\n")
 

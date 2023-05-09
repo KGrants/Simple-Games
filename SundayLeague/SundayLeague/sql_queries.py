@@ -158,12 +158,28 @@ def get_team_name_sql(team):
 
 
 def playoff_teams_sql(year):
-    cur.execute("""SELECT T.id, T.Name, COUNT(G.id)*3
+    cur.execute("""SELECT T.Name, COUNT(G.id)*3, POINTS.DIFF
                    FROM Teams T
                    LEFT JOIN Games G ON G.Winner = T.id AND G.Year = %s AND G.Game_Type = 'R'
+                   LEFT JOIN (select T.id as ID, 
+				                      sum(CASE 
+				 	                      WHEN T.id = G.Home_Team 
+					                      THEN G.Home_Points-G.Away_Points 
+					                      ELSE 
+						                    CASE 
+						                    WHEN T.id = G.Away_Team 
+						                    THEN G.Away_Points-G.Home_Points 
+						                    ELSE 0 
+						                    END 
+					                      END) as DIFF 
+		                       FROM Teams T 
+		                       Left Join Games G on (G.Home_Team = T.id or G.Away_Team = T.id) and G.Year = %s and G.Game_Type = 'R'
+		                       Group By T.id) as POINTS on POINTS.ID = T.id
+                   WHERE 1 = 1
+                   AND T.id != 999
                    GROUP BY T.Name
-                   ORDER BY 3 DESC
-                   LIMIT 8""" % (year))
+                   ORDER BY COUNT(G.id)*3 DESC, POINTS.DIFF DESC
+                   LIMIT 8""" % (year,year))
     return [i for i in cur.fetchall()]
 
 

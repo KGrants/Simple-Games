@@ -1,35 +1,5 @@
 from SQL import cur
-from SQL import conn
-import pandas as pd
 
-def mvp_query():
-    cur.execute("""SELECT T.Name, COUNT(G.id)*3
-                   FROM Teams T
-                   LEFT JOIN Games G ON G.Winner = T.id
-                   GROUP BY T.Name
-                   ORDER BY 2 DESC
-                   LIMIT 3""")
-    return [i[0] for i in cur.fetchall()]
-
-sql_query = pd.read_sql_query("""WITH HighScorers AS
-                   (
-                   SELECT 
-                   P.id, 
-                   P.Name as Player_name, 
-                   P.Surname, 
-                   T.Name as Team_name,
-                   SUM(PS.Points) OVER(PARTITION BY P.id) AS TotalPoints,
-                   ROW_NUMBER() OVER(PARTITION BY P.id) as RowNum
-                   FROM Players P
-                   LEFT JOIN Player_Score PS ON PS.Player_id = P.id
-                   INNER JOIN Games G on G.id = PS.Game_id AND G.Year = '%(year)s'
-                   LEFT JOIN Teams T ON T.id = P.Team
-                   ORDER BY 5 DESC
-                   )
-                   SELECT * 
-                   FROM HighScorers
-                   WHERE RowNum = 1
-                   LIMIT 5""", conn, params={"year":2023})
 
 def top_scorers_sql(year):
     cur.execute("""WITH HighScorers AS
@@ -154,32 +124,6 @@ def get_team_name_sql(team):
                    WHERE 1 = 1
                    AND id = %s""" % (team))
     return cur.fetchone()[0]
-
-
-def playoff_teams_sql(year):
-    cur.execute("""SELECT T.Name, COUNT(G.id)*3, POINTS.DIFF
-                   FROM Teams T
-                   LEFT JOIN Games G ON G.Winner = T.id AND G.Year = %s AND G.Game_Type = 'R'
-                   LEFT JOIN (select T.id as ID, 
-				                      sum(CASE 
-				 	                      WHEN T.id = G.Home_Team 
-					                      THEN G.Home_Points-G.Away_Points 
-					                      ELSE 
-						                    CASE 
-						                    WHEN T.id = G.Away_Team 
-						                    THEN G.Away_Points-G.Home_Points 
-						                    ELSE 0 
-						                    END 
-					                      END) as DIFF 
-		                       FROM Teams T 
-		                       Left Join Games G on (G.Home_Team = T.id or G.Away_Team = T.id) and G.Year = %s and G.Game_Type = 'R'
-		                       Group By T.id) as POINTS on POINTS.ID = T.id
-                   WHERE 1 = 1
-                   AND T.id != 999
-                   GROUP BY T.Name
-                   ORDER BY COUNT(G.id)*3 DESC, POINTS.DIFF DESC
-                   LIMIT 8""" % (year,year))
-    return [i for i in cur.fetchall()]
 
 
 def show_players_sql(team_id):

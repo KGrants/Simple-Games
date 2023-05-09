@@ -1,5 +1,4 @@
 from SQL import cur
-from SQL import conn
 import sql_queries as sqlq
 import pandas as pd
 
@@ -23,19 +22,16 @@ def show_top_scorers(year):
 
 def mvp(year):
     mvp_winner = ("",0,0)
-    winner_teams = sqlq.mvp_query()
+    sqlq.team_stand_sql(year)
+    winner_teams = [i[1] for i in cur.fetchmany(3)]
+
     sqlq.top_scorers_sql(year)
-
-    for i in cur.fetchall():
-        if i[3] == winner_teams[0] and i[4]*1.2>mvp_winner[1]:
-            mvp_winner = (f"{i[1]} {i[2]}", int(i[4]*1.2), int(i[0]))
-
-        elif i[3] == winner_teams[1] and i[4]*1.15>mvp_winner[1]:
-            mvp_winner = (f"{i[1]} {i[2]}", int(i[4]*1.15), int(i[0]))
-
-        elif i[3] == winner_teams[2] and i[4]*1.1>mvp_winner[1]:
-            mvp_winner = (f"{i[1]} {i[2]}", int(i[4]*1.1), int(i[0]))
-
+    high_scorers = cur.fetchall()
+    
+    for i in high_scorers:
+        if i[3] in winner_teams:
+            if i[4]*(1.2-0.05*winner_teams.index(i[3]))>mvp_winner[1]:
+                mvp_winner = (f"{i[1]} {i[2]}", int(i[4]*(1.2-0.05*winner_teams.index(i[3]))), int(i[0]))
         elif i[4]>mvp_winner[1]:
                 mvp_winner = (f"{i[1]} {i[2]}", int(i[4]), int(i[0]))
 

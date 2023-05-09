@@ -55,7 +55,7 @@ def top_scorers_sql(year):
 
 
 def team_stand_sql(year):
-    cur.execute("""SELECT T.Name, COUNT(G.id)*3, POINTS.DIFF
+    cur.execute("""SELECT T.Id, T.Name, COUNT(G.id)*3, POINTS.DIFF
                    FROM Teams T
                    LEFT JOIN Games G ON G.Winner = T.id AND G.Year = %s AND G.Game_Type = 'R'
                    LEFT JOIN (select T.id as ID, 
@@ -113,13 +113,12 @@ def player_count_sql():
     return
 
 
-def team_power(home_team, away_team):
+def team_power(team):
     cur.execute("""SELECT Team, AVG(Offence), AVG(Defence)
                    FROM Players
                    WHERE 1 = 1 
-                   AND Team in (%s, %s)
-                   GROUP BY Team""" % (home_team, away_team))
-    return [i for i in cur.fetchall()]
+                   AND Team = %s""" % (team))
+    return cur.fetchone()
 
 
 def player_power_sql(team_id):

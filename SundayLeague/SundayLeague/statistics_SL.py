@@ -6,9 +6,9 @@ import pandas as pd
 def show_standings(year):
     print("\nCurrent league standings:")
     sqlq.team_stand_sql(year)
-    df = pd.DataFrame(cur.fetchall(), columns = ['Team', 'Points', '+/-'])
+    df = pd.DataFrame(cur.fetchall(), columns = ['Id', 'Team', 'Points', '+/-'])
     df.index = [i for i in range(1,11)]
-    print(df)
+    print(df[['Team', 'Points', '+/-']])
     return
 
 

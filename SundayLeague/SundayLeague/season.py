@@ -4,6 +4,7 @@ import random
 import itertools
 import statistics_SL as s
 import sql_queries as sqlq
+import pandas as pd
 
 
 def wrong_team_count():
@@ -23,9 +24,10 @@ def show_teams_above():
 def game(home_team, away_team, year, g_type):
     """Simulating a single game, distributing points between players, writting to DB"""
 
-    power = sqlq.team_power(home_team, away_team)
-    home_points = int(100*(1+((power[0][1]-power[1][2])/100))*random.uniform(0.88,1.18))
-    away_points = int(100*(1-((power[1][1]-power[0][2])/100))*random.uniform(0.85,1.15))
+    home_power = sqlq.team_power(home_team)
+    away_power = sqlq.team_power(away_team)
+    home_points = int(100*(1+((home_power[1]-away_power[2])/100))*random.uniform(0.88,1.18))
+    away_points = int(100*(1+((away_power[1]-home_power[2])/100))*random.uniform(0.85,1.15))
 
     # If there is a tie randomly add or remove one point from home team
     if home_points == away_points:
@@ -106,54 +108,48 @@ def playoffs(year):
 
     while True:
         sqlq.team_stand_sql(year)
-        p = [i[0] for i in cur.fetchmany(8)]
+        playoff_tree = [i for i in cur.fetchmany(8)]
 
-        print()
-        print(f"{p[0]} - {p[7]}")
-        print(f"{p[3]} - {p[4]}")
-        print(f"{p[1]} - {p[6]}")
-        print(f"{p[2]} - {p[5]}")
-        
+        for i in range(4):
+            print(f"{playoff_tree[(0,3,1,2)[i]][1]} - {playoff_tree[(7,4,6,5)[i]][1]}")
+
         input(f"\nPress Enter to simulate next round\n")
 
         second_round = []
-        second_round.append(playoff_series(p[0][0],p[7][0]))
-        second_round.append(playoff_series(p[3][0],p[4][0]))
-        second_round.append(playoff_series(p[1][0],p[6][0]))
-        second_round.append(playoff_series(p[2][0],p[5][0]))
+        for i in range(4):
+            second_round.append(playoff_series(playoff_tree[(0,3,1,2)[i]][0],playoff_tree[(7,4,6,5)[i]][0]))
         
-        v = []
-        for i in second_round:
-            for j in p:
-                if i == j[0]:
-                    v.append(j)
-                    continue
+        playoff_tree = next_round(playoff_tree, second_round)
         
         print(f"\nSEMI-FINALS:")
-        print(f"{v[0][1]} - {v[1][1]}")
-        print(f"{v[2][1]} - {v[3][1]}")
+        print(f"{playoff_tree[0][1]} - {playoff_tree[1][1]}")
+        print(f"{playoff_tree[2][1]} - {playoff_tree[3][1]}")
 
         input(f"\nPress Enter to simulate next round\n")
 
         third_round = []
-        third_round.append(playoff_series(v[0][0],v[1][0]))
-        third_round.append(playoff_series(v[2][0],v[3][0]))
+        third_round.append(playoff_series(playoff_tree[0][0],playoff_tree[1][0]))
+        third_round.append(playoff_series(playoff_tree[2][0],playoff_tree[3][0]))
 
-        x = []
-
-        for i in third_round:
-            for j in v:
-                if i == j[0]:
-                    x.append(j)
-                    continue
+        playoff_tree = next_round(playoff_tree, third_round)
         
         print("FINALS:")
-        print(f"{x[0][1]} - {x[1][1]}")
+        print(f"{playoff_tree[0][1]} - {playoff_tree[1][1]}")
 
         input(f"\nPress Enter to simulate next round\n")
-        playoff_series(x[0][0],x[1][0])
+        playoff_series(playoff_tree[0][0],playoff_tree[1][0])
 
         return
+
+
+def next_round(full_list, winner_list):
+    next_round_list = []
+    for winner in winner_list: #i
+            for team in full_list: #j
+                if winner == team[0]:
+                    next_round_list.append(team)
+                    continue
+    return next_round_list
         
 
 def playoff_series(team_a, team_b):

@@ -50,7 +50,8 @@ def season_screen():
         if season_round == 19:                            # If 18 rounds are done, let's go to playoffs
             print("\nRegular Season MVP:")
             print(s.mvp(year)[0])
-            # print(f"\n{year} Most Improved Player:")    # Need to implement
+            if year > 2023:
+                pass # print(f"\n{year} Most Improved Player:")    # Need to implement
             # print(s.mvp(year)[0])                       # Need to implement
 
             print(f"\n{year} playoffs!")
@@ -84,7 +85,6 @@ if __name__ == '__main__':
 
 # Current To-Do list: 
 
-# update team standings to have point difference as second order by item
 # How to display historic results
 # Start a new game or continue previous one (new game would drop data in Games and Player_Score tables) - test start_new_season
 # Random player has spent a lot of time in training camp - implement random_development()

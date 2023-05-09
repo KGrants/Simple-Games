@@ -1,5 +1,7 @@
 from SQL import cur
+from SQL import conn
 import sql_queries as sqlq
+import pandas as pd
 
 def show_standings(year):
     print("\nCurrent league standings:")
@@ -14,10 +16,9 @@ def show_standings(year):
 def show_top_scorers(year):
     print("\nTop Scorers:")
     sqlq.top_scorers_sql(year)
-    place = 1
-    for i in cur.fetchall():
-        print(f"{place}. {i[1]} {i[2]} ({i[3]}) = {i[4]} pts")
-        place += 1
+    df = pd.DataFrame(cur.fetchall(), columns = ['id', 'Name', 'Surname', 'Team', 'Points', 'RowNum'])
+    df.index = [i for i in range(1,6)]
+    print(df[['Name', 'Surname', 'Team', 'Points']])
     return
 
 

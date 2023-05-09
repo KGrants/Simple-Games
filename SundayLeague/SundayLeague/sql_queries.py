@@ -1,4 +1,6 @@
 from SQL import cur
+from SQL import conn
+import pandas as pd
 
 def mvp_query():
     cur.execute("""SELECT T.Name, COUNT(G.id)*3
@@ -9,6 +11,25 @@ def mvp_query():
                    LIMIT 3""")
     return [i[0] for i in cur.fetchall()]
 
+sql_query = pd.read_sql_query("""WITH HighScorers AS
+                   (
+                   SELECT 
+                   P.id, 
+                   P.Name as Player_name, 
+                   P.Surname, 
+                   T.Name as Team_name,
+                   SUM(PS.Points) OVER(PARTITION BY P.id) AS TotalPoints,
+                   ROW_NUMBER() OVER(PARTITION BY P.id) as RowNum
+                   FROM Players P
+                   LEFT JOIN Player_Score PS ON PS.Player_id = P.id
+                   INNER JOIN Games G on G.id = PS.Game_id AND G.Year = '%(year)s'
+                   LEFT JOIN Teams T ON T.id = P.Team
+                   ORDER BY 5 DESC
+                   )
+                   SELECT * 
+                   FROM HighScorers
+                   WHERE RowNum = 1
+                   LIMIT 5""", conn, params={"year":2023})
 
 def top_scorers_sql(year):
     cur.execute("""WITH HighScorers AS

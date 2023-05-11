@@ -1,11 +1,11 @@
 from SQL import conn
 from SQL import cur
+import sql_queries as sqlq
+import pandas as pd
 import names
 import random
 import sys
-import statistics
-import sql_queries as sqlq
-import pandas as pd
+
 
 
 def first_screen():
@@ -120,10 +120,8 @@ def create_custom_player():
 def show_players(team_id):
     """Displays all players for specific team"""
 
-    #players = sqlq.show_players_sql(team_id)
     df = pd.DataFrame(sqlq.show_players_sql(team_id), columns = ['Id', 'Name', 'Surname', 'Age', 'Offence', 'Defence', 'Potential', 'Team'])
     df.index = [i for i in range(1,6)]
-    #newdf = df[['Age', 'Offence', 'Defence', 'Potential']]
     print(df[['Name', 'Surname', 'Age', 'Offence', 'Defence', 'Potential']])
     print(f"\n{df[['Age', 'Offence', 'Defence', 'Potential']].mean().to_string()}\n")
     return
@@ -142,13 +140,13 @@ def show_all_teams():
 
 def show_one_team():
     """Displays one team and players"""
-    teams = sqlq.show_one_team_sql()
-    for i in teams:
-        print(f"{i[0]} - {i[1]}:")
+
+    df = pd.DataFrame(sqlq.show_one_team_sql(), columns = ['Id', 'Name'])
+    print(df.to_string(index=False))
     try:
         user_input = int(input("Please choose id of team you want to see players for: "))
-        team_name = [i[1] for i in teams if i[0] == user_input]
-        print(f"\n{team_name[0]} players:")
+        team_name = df.loc[df['Id'] == user_input, 'Name'].iloc[0]
+        print(f"\n{team_name} players:")
         show_players(user_input)
     except Exception as e:
         print(f"Error: {e}")
@@ -183,15 +181,13 @@ def trade_players():
         print("First player:")
         show_one_team()
         one_id = int(input("Please provide id of player that needs to be traded : "))
-        one_team_id = sqlq.get_trade_dets_sql(one_id)
 
         print("Second player:")
         show_one_team()
         two_id = int(input("Please provide id of player that needs to be traded : "))
-        two_team_id = sqlq.get_trade_dets_sql(two_id)
 
-        sqlq.trade_players_sql(two_team_id, one_id)
-        sqlq.trade_players_sql(one_team_id, two_id)
+        sqlq.trade_players_sql(sqlq.get_trade_dets_sql(two_id), one_id)
+        sqlq.trade_players_sql(sqlq.get_trade_dets_sql(one_id), two_id)
         conn.commit()
 
         print("Trade has been successfully done!")
@@ -206,18 +202,15 @@ def sign_player():
     show_players(999)
     try:
         to_sign = int(input("Choose a free agent id to sign:"))
-        free_agents = sqlq.show_free_agents_sql()
 
-        if to_sign not in free_agents:
+        if to_sign not in sqlq.show_free_agents_sql():
             print("You can't sign a player who is not a free agent!")
             return
 
-        teams = sqlq.show_all_teams_sql()
-        for i in teams:
-            print(f"{i[0]} - {i[1]}")
-        print(f"\n")
-        to_team = int(input("Choose to which team sign this player:"))
+        df = pd.DataFrame(sqlq.show_all_teams_sql(), columns = ['Id', 'Name'])
+        print(f"{df.to_string(index=False)}\n")
 
+        to_team = int(input("Choose to which team sign this player:"))
         sqlq.sign_player_sql(to_team, to_sign)
         conn.commit()
     except Exception as e:

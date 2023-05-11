@@ -5,6 +5,7 @@ import random
 import sys
 import statistics
 import sql_queries as sqlq
+import pandas as pd
 
 
 def first_screen():
@@ -40,8 +41,8 @@ def season_menu():
                "6. Exit"]
     print("", *options, sep="\n")
     try:
-        user_input = int(input(">").strip())
-        return user_input if user_input in [1,2,3,4,5,6] else 6
+        user_input = input(">")
+        return int(user_input) if int(user_input) in [1,2,3,4,5,6] else 6
     except Exception as e:
         print(f"Wrong user input: {e}")
 
@@ -68,7 +69,6 @@ def reset_season():
 
     cur.execute("""DELETE FROM Games""")
     cur.execute("""DELETE FROM Player_Score""")
-    # cur.execute("""DROP TABLE Games""") # testing purposes
     conn.commit()
 
 
@@ -120,14 +120,12 @@ def create_custom_player():
 def show_players(team_id):
     """Displays all players for specific team"""
 
-    players = sqlq.show_players_sql(team_id)
-    for j in players:
-        print(f"{j[1]} {j[2]} (id:{j[0]}) - age: {j[3]} off: {j[4]} def: {j[5]} pot: {j[6]}")
-    if len(players) > 0:
-        off_avg = round(statistics.mean([x[4] for x in players]),2)
-        def_avg = round(statistics.mean([x[5] for x in players]),2)
-        pot_avg = round(statistics.mean([x[6] for x in players]),2)
-        print(f"Team avg = off:{off_avg} def:{def_avg} pot: {pot_avg}")
+    #players = sqlq.show_players_sql(team_id)
+    df = pd.DataFrame(sqlq.show_players_sql(team_id), columns = ['Id', 'Name', 'Surname', 'Age', 'Offence', 'Defence', 'Potential', 'Team'])
+    df.index = [i for i in range(1,6)]
+    #newdf = df[['Age', 'Offence', 'Defence', 'Potential']]
+    print(df[['Name', 'Surname', 'Age', 'Offence', 'Defence', 'Potential']])
+    print(f"\n{df[['Age', 'Offence', 'Defence', 'Potential']].mean().to_string()}\n")
     return
 
 

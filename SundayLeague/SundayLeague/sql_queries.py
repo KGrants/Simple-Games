@@ -198,3 +198,30 @@ def get_last_game_id_sql():
                    FROM Games
                    ORDER BY 1 DESC""")
     return cur.fetchone()[0]
+
+
+def most_improved_sql(year):
+    cur.execute("""with 
+                   last_year as (						 
+	                   select g.Year
+		                     ,ps.Player_id
+		                     ,sum(ps.Points) as Pts 
+	                   from Player_Score ps
+	                   inner join Games g on g.Id = ps.Game_id and g.Year = %s
+	                   group by G.year
+			                   ,ps.Player_id)
+                   ,this_year as (
+	                   select g.Year
+		                     ,ps.Player_id
+		                     ,sum(ps.Points) as Pts
+	                   from Player_Score ps
+	                   inner join Games g on g.Id = ps.Game_id and g.Year = %s
+	                   group by G.year
+			                   ,ps.Player_id)
+                   select ty.Player_id
+	                     ,ty.Pts - ly.Pts 
+                   from last_year ly
+                   inner join this_year ty on ty.Player_id = ly.Player_id
+                   order by 2 desc
+                   limit 1""" % (year-1, year))
+    return

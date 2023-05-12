@@ -49,14 +49,14 @@ def season_screen():
 
         if season_round == 19:                            # If 18 rounds are done, let's go to playoffs
             s.mvp(year)                                   # Displays season MVP
-            if year > 2023:
-                s.mip(year)                               # Displays most improved player
+            if year > 2023: s.mip(year)                   # Displays most improved player
 
             print(f"\n{year} playoffs!")
-            se.playoffs(year)
-            se.mvp_growth(year)                           # Increase Offence and Defence of MVP
+            se.playoffs(year)                             # starts playoffs
+            se.mvp_growth(year)                           # Increase Offence and Defence for MVP
             se.player_development()                       # Changes Offence and defence based on potential, potential based on age
-            # se.random_development()                     # Need to implement
+            se.random_development()                       # Increases all stats by 10 for one random player
+            # se.draft()                                  # Need to implement
             season_round = 1
             year += 1
             start_new_season = False
@@ -85,7 +85,7 @@ if __name__ == '__main__':
 
 # How to display historic results
 # Start a new game or continue previous one (new game would drop data in Games and Player_Score tables) - test start_new_season
-# Random player has spent a lot of time in training camp - implement random_development()
 # Generate new players
 # Draft new players each season
 # cancel of trading signing or dropping players
+# need to add validation after draft that all teams has only 5 players or change the logic to play 5 best players (This sounds better)

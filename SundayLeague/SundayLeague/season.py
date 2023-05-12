@@ -5,6 +5,7 @@ import itertools
 import statistics_SL as s
 import sql_queries as sqlq
 import pandas as pd
+import Functions as f
 
 
 def wrong_team_count():
@@ -181,8 +182,8 @@ def mvp_growth(year):
 
     cur.execute("""UPDATE Players 
                    SET 
-                   Offence = CASE Offence WHEN Offence + 5 > 100 THEN 100 ELSE Offence +5 END,
-	               Defence = CASE Defence WHEN Defence + 5 > 100 THEN 100 ELSE Defence +5 END
+                   Offence = CASE WHEN Offence + 5 > 100 THEN 100 ELSE Offence +5 END,
+	               Defence = CASE WHEN Defence + 5 > 100 THEN 100 ELSE Defence +5 END
                    WHERE id = %s""" % (mvp))
     conn.commit()
     return
@@ -203,5 +204,28 @@ def player_development():
                    Potential = CASE WHEN Potential < 0 THEN 0 ELSE Potential END""")
     conn.commit()
     return
+
+
+def random_development():
+    cur.execute("""UPDATE PLayers
+                   SET
+                   Offence = CASE WHEN Offence + 10 > 100 THEN 100 ELSE Offence +10 END,
+	               Defence = CASE WHEN Defence + 10 > 100 THEN 100 ELSE Defence +10 END,
+                   Potential = CASE WHEN Potential + 10 > 100 THEN 100 ELSE Potential +10 END
+                   WHERE 1 = 1
+                   AND Id in (
+                        select Id from Players
+                        order by RANDOM()
+                        limit 1)""")
+    conn.commit()
+    return
+
+def draft():
+    f.draft_team()
+    # Generate 10 players with age limit <23 and assign to draft team
+
+    # Display rookies
+    # Sort all teams based on their regular season points asc
+    # Each team picks one
 
 

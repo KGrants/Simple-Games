@@ -54,10 +54,14 @@ def create_team():
         name = input("Please provide team name : ").strip()
         founded = int(input("Please provide year when team was founded (YYYY) : ").strip())
 
-        if name != "Free Agents":
-            sqlq.create_team_sql(name, founded)
+        if name == "Free Agents":
+            cur.execute("""INSERT INTO Teams (Id, Name, Founded)
+                           VALUES (999, "Free Agents", 9999);""")
+        elif name == "Draft":
+            cur.execute("""INSERT INTO Teams (Id, Name, Founded)
+                           VALUES (998, "Draft", 9999);""")
         else:
-            create_team("Free Agents", 9999)
+            sqlq.create_team_sql(name, founded)
         conn.commit()
         print(f"{name} was created successfully!\n")
     except Exception as e:
@@ -72,7 +76,7 @@ def reset_season():
     conn.commit()
 
 
-def create_player():
+def create_player(limit = 32):
     """Creates new random player"""
 
     team_id     = int(input("Please provide team_id for which to create a player : ").strip())
@@ -80,7 +84,7 @@ def create_player():
     last_name   = names.get_last_name()
     offence     = random.randint(50, 100)
     defence     = random.randint(50, 100)
-    age         = random.randint(16, 32)
+    age         = random.randint(16, limit)
     potential   = int(100 - random.randint(0, 50) * ((age**2)/32)/16)
     try:
         cur.execute("""INSERT INTO Players
@@ -166,13 +170,27 @@ def drop_player():
 
 
 def free_agents():
-    """Check if Free Agents exists, if not - creates"""
+    """Check if Free Agents exists, if not - create"""
 
     cur.execute("""SELECT count(*)
                     FROM Teams
                     WHERE id = 999""")
     if cur.fetchone()[0] == 0:
-        create_team("Free Agents", 9999)
+        cur.execute("""INSERT INTO Teams (Id, Name, Founded)
+                       VALUES (999, "Free Agents", 9999);""")
+    conn.commit()
+
+
+def draft_team():
+    """Check if Draft exists, if not - create"""
+
+    cur.execute("""SELECT count(*)
+                    FROM Teams
+                    WHERE id = 998""")
+    if cur.fetchone()[0] == 0:
+        cur.execute("""INSERT INTO Teams (Id, Name, Founded)
+                       VALUES (998, "Draft", 9999);""")
+    conn.commit()
 
 
 def trade_players():

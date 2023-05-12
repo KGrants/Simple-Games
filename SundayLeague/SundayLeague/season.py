@@ -222,14 +222,15 @@ def random_development():
 
 def draft(year):
     f.draft_team()
-    for i in range(10): f.create_player(limit = 24, team_id = 998)
-    f.show_players(998)
+    for _ in range(10): f.create_player(limit = 24, team_id = 998)
 
     df = s.show_draft_order(year)
     for team in df['Team'].values:
+        f.show_players(998)
         print(f"In {year} draft {team} selects:")
         to_sign = int(input())
         to_team = df.loc[df['Team'] == team, 'Id'].iloc[0]
         sqlq.sign_player_sql(to_team, to_sign)
+        conn.commit()
 
 

@@ -34,5 +34,13 @@ def mvp(year):
                 mvp_winner = (f"{i[1]} {i[2]}", int(i[4]*(1.2-0.05*winner_teams.index(i[3]))), int(i[0]))
         elif i[4]>mvp_winner[1]:
                 mvp_winner = (f"{i[1]} {i[2]}", int(i[4]), int(i[0]))
-
+    
+    print("\nRegular Season MVP:")
+    print(mvp_winner[0])
     return mvp_winner
+
+def mip(year):
+    print(f"\n{year} Most Improved Player:")
+    sqlq.most_improved_sql(year)
+    print(cur.fetchone()[1])
+    return

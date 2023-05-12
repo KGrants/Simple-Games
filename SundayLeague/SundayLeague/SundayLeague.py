@@ -48,11 +48,9 @@ def season_screen():
     while True:
 
         if season_round == 19:                            # If 18 rounds are done, let's go to playoffs
-            print("\nRegular Season MVP:")
-            print(s.mvp(year)[0])
+            s.mvp(year)                                   # Displays season MVP
             if year > 2023:
-                pass # print(f"\n{year} Most Improved Player:")    # Need to implement
-            # print(s.mvp(year)[0])                       # Need to implement
+                s.mip(year)                               # Displays most improved player
 
             print(f"\n{year} playoffs!")
             se.playoffs(year)

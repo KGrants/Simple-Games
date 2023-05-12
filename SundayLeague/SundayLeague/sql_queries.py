@@ -218,10 +218,11 @@ def most_improved_sql(year):
 	                   inner join Games g on g.Id = ps.Game_id and g.Year = %s
 	                   group by G.year
 			                   ,ps.Player_id)
-                   select ty.Player_id
+                   select ty.Player_id, p.Name||' '||p.Surname as Player
 	                     ,ty.Pts - ly.Pts 
                    from last_year ly
                    inner join this_year ty on ty.Player_id = ly.Player_id
-                   order by 2 desc
+                   inner join Players p on p.id = ty.Player_id
+                   order by 3 desc
                    limit 1""" % (year-1, year))
     return

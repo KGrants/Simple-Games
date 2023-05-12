@@ -76,10 +76,10 @@ def reset_season():
     conn.commit()
 
 
-def create_player(limit = 32):
+def create_player(limit = 32, team_id = None):
     """Creates new random player"""
-
-    team_id     = int(input("Please provide team_id for which to create a player : ").strip())
+    if team_id == None:
+        team_id     = int(input("Please provide team_id for which to create a player : ").strip())
     first_name  = names.get_first_name(gender="male")
     last_name   = names.get_last_name()
     offence     = random.randint(50, 100)

@@ -44,3 +44,12 @@ def mip(year):
     sqlq.most_improved_sql(year)
     print(cur.fetchone()[1])
     return
+
+
+def show_draft_order(year):
+    print("\nDraft Order:")
+    sqlq.draft_order_sql(year)
+    df = pd.DataFrame(cur.fetchall(), columns = ['Id', 'Team', 'Points', '+/-'])
+    df.index = [i for i in range(1,11)]
+    print(df[['Team', 'Points', '+/-']])
+    return df

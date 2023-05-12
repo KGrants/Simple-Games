@@ -220,12 +220,16 @@ def random_development():
     conn.commit()
     return
 
-def draft():
+def draft(year):
     f.draft_team()
-    # Generate 10 players with age limit <23 and assign to draft team
+    for i in range(10): f.create_player(limit = 24, team_id = 998)
+    f.show_players(998)
 
-    # Display rookies
-    # Sort all teams based on their regular season points asc
-    # Each team picks one
+    df = s.show_draft_order(year)
+    for team in df['Team'].values:
+        print(f"In {year} draft {team} selects:")
+        to_sign = int(input())
+        to_team = df.loc[df['Team'] == team, 'Id'].iloc[0]
+        sqlq.sign_player_sql(to_team, to_sign)
 
 

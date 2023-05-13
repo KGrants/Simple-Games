@@ -195,14 +195,19 @@ def draft_team():
 
 def trade_players():
     """Exchanges two players between two teams"""
+
     try:
         print("First player:")
         show_one_team()
-        one_id = int(input("Please provide id of player that needs to be traded : "))
+        one_id = int(input("Please provide id of player that needs to be traded (Cancel = 0): "))
+        if one_id == 0:
+            return
 
         print("Second player:")
         show_one_team()
-        two_id = int(input("Please provide id of player that needs to be traded : "))
+        two_id = int(input("Please provide id of player that needs to be traded (Cancel = 0): "))
+        if two_id == 0:
+            return
 
         sqlq.trade_players_sql(sqlq.get_trade_dets_sql(two_id), one_id)
         sqlq.trade_players_sql(sqlq.get_trade_dets_sql(one_id), two_id)

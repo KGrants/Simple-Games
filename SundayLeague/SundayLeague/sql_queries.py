@@ -252,3 +252,9 @@ def draft_order_sql(year):
                    ORDER BY COUNT(G.id)*3, POINTS.DIFF
 				   """ % (year,year))
     return
+
+
+def inactivate_team_sql(id):
+    cur.execute("""UPADTE Teams
+                   SET valid = 0 
+                   WHERE Id = %s""" % id)

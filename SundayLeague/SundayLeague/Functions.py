@@ -224,7 +224,9 @@ def sign_player():
     print("Free Agents:")
     show_players(999)
     try:
-        to_sign = int(input("Choose a free agent id to sign:"))
+        to_sign = int(input("Choose a free agent id to sign (cancel = 0):"))
+        if to_sign == 0:
+            return
 
         if to_sign not in sqlq.show_free_agents_sql():
             print("You can't sign a player who is not a free agent!")

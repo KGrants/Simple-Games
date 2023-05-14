@@ -69,6 +69,20 @@ def create_team():
         print(f"Error creating team: {e}")
 
 
+def inactivate_team():
+    """Inactivates Team and releases all players to free agents"""
+
+    df = pd.DataFrame(sqlq.show_one_team_sql(), columns = ['Id', 'Name'])
+    print(df.to_string(index=False))
+
+    try:
+        user_input = int(input("Please provide team id to inactivate"))
+        sqlq.inactivate_team_sql(user_input)
+        sqlq.release_all_players(user_input)
+        conn.commit()
+    except Exception as e:
+        print(f"Error creating player: {e}")
+
 def reset_season():
     """if we start a new game, delete entries in Games and Player_Score"""
 

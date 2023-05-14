@@ -258,3 +258,9 @@ def inactivate_team_sql(id):
     cur.execute("""UPADTE Teams
                    SET valid = 0 
                    WHERE Id = %s""" % id)
+
+
+def release_all_players(id):
+    cur.execute("""UPADTE Players
+                   SET Team = 999 
+                   WHERE Team = %s""" % id)

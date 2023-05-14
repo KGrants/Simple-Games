@@ -15,6 +15,7 @@ def main():
                                6:f.drop_player,           # User can drop any player from any team
                                7:f.sign_player,           # User can sign any player from free agents to any team
                                8:f.create_custom_player,  # User can sign any player from free agents to any team
+                               9:
                                9:f.exit_app               # Exits application
                                }
 

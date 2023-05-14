@@ -20,14 +20,15 @@ def first_screen():
                "6. Drop Player from team",
                "7. Sign a free agent",
                "8. Create Custom Player",
-               "9. Exit"]
+               "9. Inactivate Team"
+               "10. Exit"]
     print("", *options, sep="\n")
 
     user_input = input(">").strip()
-    if user_input in "12345678":
+    if user_input in "123456789":
         return int(user_input)
     else:
-        return 9
+        return 10
 
 
 def season_menu():

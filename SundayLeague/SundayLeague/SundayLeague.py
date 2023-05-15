@@ -57,7 +57,7 @@ def season_screen():
             se.mvp_growth(year)                           # Increase Offence and Defence for MVP
             se.player_development()                       # Changes Offence and defence based on potential, potential based on age
             se.random_development()                       # Increases all stats by 10 for one random player
-            # se.draft(year)                                  # Need to implement
+            se.draft(year)                                # Creates new players and starts draft
             season_round = 1
             year += 1
             start_new_season = False

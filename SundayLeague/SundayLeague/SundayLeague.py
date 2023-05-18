@@ -85,7 +85,6 @@ if __name__ == '__main__':
 # Current To-Do list: 
 
 # Test and fix draft
-# cancel of trading signing or dropping players
 # need to add validation after draft that all teams has only 5 players or change the logic to play 5 best players (This sounds better)
 # How to display historic results
 # Start a new game or continue previous one (new game would drop data in Games and Player_Score tables) - test start_new_season

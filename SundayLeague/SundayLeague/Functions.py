@@ -176,7 +176,9 @@ def drop_player():
 
     show_one_team()
     try:
-        drop_id = int(input("Please provide id of player that you want to drop: "))
+        drop_id = int(input("Please provide id of player that you want to drop (0 to cancel): "))
+        if drop_id == 0:
+            return
         sqlq.drop_player_sql(drop_id)
         conn.commit()
         print("Player has been released to Free Agents")
@@ -250,7 +252,9 @@ def sign_player():
         df = pd.DataFrame(sqlq.show_all_teams_sql(), columns = ['Id', 'Name'])
         print(f"{df.to_string(index=False)}\n")
 
-        to_team = int(input("Choose to which team sign this player:"))
+        to_team = int(input("Choose to which team sign this player (cancel = 0):"))
+        if to_team == 0:
+            return
         sqlq.sign_player_sql(to_team, to_sign)
         conn.commit()
     except Exception as e:

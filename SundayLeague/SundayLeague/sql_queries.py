@@ -87,7 +87,9 @@ def team_power(team):
     cur.execute("""SELECT Team, AVG(Offence), AVG(Defence)
                    FROM Players
                    WHERE 1 = 1 
-                   AND Team = %s""" % (team))
+                   AND Team =  %s
+				   order by Offence + Defence DESC
+				   LIMIT 5""" % (team))
     return cur.fetchone()
 
 

@@ -145,6 +145,16 @@ def show_all_teams_sql():
     return [i for i in cur.fetchall()]
 
 
+def show_invalid_teams_sql():
+    cur.execute("""SELECT id, name 
+                   FROM Teams
+                   WHERE 1 = 1
+                   AND valid != 1
+                   AND id != 999""")
+    return [i for i in cur.fetchall()]
+
+
+
 def show_one_team_sql():
     cur.execute("""SELECT id, name 
                    FROM Teams""")

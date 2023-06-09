@@ -6,7 +6,7 @@ def show_standings(year):
     print("\nCurrent league standings:")
     sqlq.team_stand_sql(year)
     df = pd.DataFrame(cur.fetchall(), columns = ['Id', 'Team', 'Points', '+/-'])
-    df.index = [i for i in range(1,11)]
+    df.index = [i for i in range(1,df.shape[0]+1)]
     print(df[['Team', 'Points', '+/-']])
     return
 
@@ -15,7 +15,7 @@ def show_top_scorers(year):
     print("\nTop Scorers:")
     sqlq.top_scorers_sql(year)
     df = pd.DataFrame(cur.fetchall(), columns = ['id', 'Name', 'Surname', 'Team', 'Points', 'RowNum'])
-    df.index = [i for i in range(1,6)]
+    df.index = [i for i in range(1,df.shape[0]+1)]
     print(df[['Name', 'Surname', 'Team', 'Points']])
     return
 

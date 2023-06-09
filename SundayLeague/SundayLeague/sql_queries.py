@@ -55,7 +55,7 @@ def check_team_count():
                    FROM Teams
                    WHERE 1 = 1
                    AND valid = 1
-                   AND id != 999""")
+                   AND id not in (999, 998)""")
     return cur.fetchone()[0]
 
 
@@ -65,7 +65,7 @@ def check_player_count():
                    INNER JOIN Teams t ON t.id = p.Team
                    WHERE 1 = 1 
                    AND t.valid = 1
-                   AND t.id != 999
+                   AND t.id not in (999, 998)
                    GROUP by t.Name
                    HAVING COUNT(*) != 5""")
     return False if cur.fetchone() == None else True
@@ -259,7 +259,7 @@ def draft_order_sql(year):
 		                       Left Join Games G on (G.Home_Team = T.id or G.Away_Team = T.id) and G.Year = %s and G.Game_Type = 'R'
 		                       Group By T.id) as POINTS on POINTS.ID = T.id
                    WHERE 1 = 1
-                   AND T.id != 999
+                   AND T.id not in (999, 998)
                    GROUP BY T.Name
                    ORDER BY COUNT(G.id)*3, POINTS.DIFF
 				   """ % (year,year))

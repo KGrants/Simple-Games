@@ -20,7 +20,7 @@ def first_screen():
                "6. Drop Player from team",
                "7. Sign a free agent",
                "8. Create Custom Player",
-               "9. Inactivate Team"
+               "9. Inactivate Team",
                "10. Exit"]
     print("", *options, sep="\n")
 
@@ -140,7 +140,7 @@ def show_players(team_id):
     """Displays all players for specific team"""
 
     df = pd.DataFrame(sqlq.show_players_sql(team_id), columns = ['Id', 'Name', 'Surname', 'Age', 'Offence', 'Defence', 'Potential', 'Team'])
-    df.index = [i for i in range(1,6)]
+    df.index = [i for i in range(1,df.shape[0]+1)]
     print(df[['Name', 'Surname', 'Age', 'Offence', 'Defence', 'Potential']])
     print(f"\n{df[['Age', 'Offence', 'Defence', 'Potential']].mean().to_string()}\n")
     return

@@ -43,7 +43,7 @@ def team_stand_sql(year):
 		                       Left Join Games G on (G.Home_Team = T.id or G.Away_Team = T.id) and G.Year = %s and G.Game_Type = 'R'
 		                       Group By T.id) as POINTS on POINTS.ID = T.id
                    WHERE 1 = 1
-                   AND T.id != 999
+                   AND T.id not in (999, 998)
                    GROUP BY T.Name
                    ORDER BY COUNT(G.id)*3 DESC, POINTS.DIFF DESC
 				   """ % (year,year))

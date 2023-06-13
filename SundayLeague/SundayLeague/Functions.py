@@ -141,7 +141,7 @@ def show_players(team_id):
 
     df = pd.DataFrame(sqlq.show_players_sql(team_id), columns = ['Id', 'Name', 'Surname', 'Age', 'Offence', 'Defence', 'Potential', 'Team'])
     df.index = [i for i in range(1,df.shape[0]+1)]
-    print(df[['Name', 'Surname', 'Age', 'Offence', 'Defence', 'Potential']])
+    print(df[['Id', 'Name', 'Surname', 'Age', 'Offence', 'Defence', 'Potential']])
     print(f"\n{df[['Age', 'Offence', 'Defence', 'Potential']].mean().to_string()}\n")
     return
 

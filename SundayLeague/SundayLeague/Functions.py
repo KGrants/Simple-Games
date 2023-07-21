@@ -7,21 +7,22 @@ import random
 import sys
 
 
-
 def first_screen():
     """Prints out first screen menu and obtains users choice"""
 
     print("Welcome to Sunday League NBA:")
-    options = ["1. Create a Team", 
-               "2. Create a Player", 
-               "3. Start the Season", 
-               "4. Show all Teams", 
-               "5. Show one team", 
-               "6. Drop Player from team",
-               "7. Sign a free agent",
-               "8. Create Custom Player",
-               "9. Inactivate Team",
-               "10. Exit"]
+    options = [
+        "1. Create a Team",
+        "2. Create a Player",
+        "3. Start the Season",
+        "4. Show all Teams",
+        "5. Show one team",
+        "6. Drop Player from team",
+        "7. Sign a free agent",
+        "8. Create Custom Player",
+        "9. Inactivate Team",
+        "10. Exit",
+    ]
     print("", *options, sep="\n")
 
     user_input = input(">").strip()
@@ -34,16 +35,18 @@ def first_screen():
 def season_menu():
     """Prints out season screen menu and obtains users choice"""
 
-    options = ["1. Advance one Round", 
-               "2. Trade player", 
-               "3. Cut player", 
-               "4. Sign free agent",
-               "5. Show all teams",
-               "6. Exit"]
+    options = [
+        "1. Advance one Round",
+        "2. Trade player",
+        "3. Cut player",
+        "4. Sign free agent",
+        "5. Show all teams",
+        "6. Exit",
+    ]
     print("", *options, sep="\n")
     try:
         user_input = input(">")
-        return int(user_input) if int(user_input) in [1,2,3,4,5,6] else 6
+        return int(user_input) if int(user_input) in [1, 2, 3, 4, 5, 6] else 6
     except Exception as e:
         print(f"Wrong user input: {e}")
 
@@ -53,14 +56,20 @@ def create_team():
 
     try:
         name = input("Please provide team name : ").strip()
-        founded = int(input("Please provide year when team was founded (YYYY) : ").strip())
+        founded = int(
+            input("Please provide year when team was founded (YYYY) : ").strip()
+        )
 
         if name == "Free Agents":
-            cur.execute("""INSERT INTO Teams (Id, Name, Founded)
-                           VALUES (999, "Free Agents", 9999);""")
+            cur.execute(
+                """INSERT INTO Teams (Id, Name, Founded)
+                           VALUES (999, "Free Agents", 9999);"""
+            )
         elif name == "Draft":
-            cur.execute("""INSERT INTO Teams (Id, Name, Founded)
-                           VALUES (998, "Draft", 9999);""")
+            cur.execute(
+                """INSERT INTO Teams (Id, Name, Founded)
+                           VALUES (998, "Draft", 9999);"""
+            )
         else:
             sqlq.create_team_sql(name, founded)
         conn.commit()
@@ -72,7 +81,7 @@ def create_team():
 def inactivate_team():
     """Inactivates Team and releases all players to free agents"""
 
-    df = pd.DataFrame(sqlq.show_one_team_sql(), columns = ['Id', 'Name'])
+    df = pd.DataFrame(sqlq.show_one_team_sql(), columns=["Id", "Name"])
     print(df.to_string(index=False))
 
     try:
@@ -83,6 +92,7 @@ def inactivate_team():
     except Exception as e:
         print(f"Error creating player: {e}")
 
+
 def reset_season():
     """if we start a new game, delete entries in Games and Player_Score"""
 
@@ -91,25 +101,31 @@ def reset_season():
     conn.commit()
 
 
-def create_player(limit = 32, team_id = None):
+def create_player(limit=32, team_id=None):
     """Creates new random player"""
     if team_id == None:
-        team_id     = int(input("Please provide team_id for which to create a player : ").strip())
-    first_name  = names.get_first_name(gender="male")
-    last_name   = names.get_last_name()
-    offence     = random.randint(50, 100)
-    defence     = random.randint(50, 100)
-    age         = random.randint(16, limit)
-    potential   = int(100 - random.randint(0, 50) * ((age**2)/32)/16)
+        team_id = int(
+            input("Please provide team_id for which to create a player : ").strip()
+        )
+    first_name = names.get_first_name(gender="male")
+    last_name = names.get_last_name()
+    offence = random.randint(50, 100)
+    defence = random.randint(50, 100)
+    age = random.randint(16, limit)
+    potential = int(100 - random.randint(0, 50) * ((age**2) / 32) / 16)
     try:
-        cur.execute("""INSERT INTO Players
+        cur.execute(
+            """INSERT INTO Players
                        (Name, Surname, Age, Offence, Defence, Potential, Team)
                        VALUES
                        ('%s', '%s', '%s', %s, %s, %s, %s)"""
-                       % (first_name, last_name, age, offence, defence, potential, team_id))
+            % (first_name, last_name, age, offence, defence, potential, team_id)
+        )
         conn.commit()
         print(f"{first_name} {last_name} was created successfully!")
-        print(f"Age = {age}\nOffence = {offence}\nDefence = {defence}\nPotential = {potential}\n")
+        print(
+            f"Age = {age}\nOffence = {offence}\nDefence = {defence}\nPotential = {potential}\n"
+        )
     except Exception as e:
         print(f"Error creating player: {e}")
 
@@ -117,21 +133,25 @@ def create_player(limit = 32, team_id = None):
 def create_custom_player():
     """Creates new custom player"""
     try:
-        team_id     = int(input("Team id:"))
-        first_name  = input("Name:")
-        last_name   = input("Surname:")
-        offence     = int(input("Offence:"))
-        defence     = int(input("Defence:"))
-        age         = int(input("Age:"))
-        potential   = int(input("Potential:"))
-        cur.execute("""INSERT INTO Players
+        team_id = int(input("Team id:"))
+        first_name = input("Name:")
+        last_name = input("Surname:")
+        offence = int(input("Offence:"))
+        defence = int(input("Defence:"))
+        age = int(input("Age:"))
+        potential = int(input("Potential:"))
+        cur.execute(
+            """INSERT INTO Players
                        (Name, Surname, Age, Offence, Defence, Potential, Team)
                        VALUES
                        ('%s', '%s', '%s', %s, %s, %s, %s)"""
-                       % (first_name, last_name, age, offence, defence, potential, team_id))
+            % (first_name, last_name, age, offence, defence, potential, team_id)
+        )
         conn.commit()
         print(f"{first_name} {last_name} was created successfully!")
-        print(f"Age = {age}\nOffence = {offence}\nDefence = {defence}\nPotential = {potential}\n")
+        print(
+            f"Age = {age}\nOffence = {offence}\nDefence = {defence}\nPotential = {potential}\n"
+        )
     except Exception as e:
         print(f"Error creating player: {e}")
 
@@ -139,9 +159,21 @@ def create_custom_player():
 def show_players(team_id):
     """Displays all players for specific team"""
 
-    df = pd.DataFrame(sqlq.show_players_sql(team_id), columns = ['Id', 'Name', 'Surname', 'Age', 'Offence', 'Defence', 'Potential', 'Team'])
-    df.index = [i for i in range(1,df.shape[0]+1)]
-    print(df[['Id', 'Name', 'Surname', 'Age', 'Offence', 'Defence', 'Potential']])
+    df = pd.DataFrame(
+        sqlq.show_players_sql(team_id),
+        columns=[
+            "Id",
+            "Name",
+            "Surname",
+            "Age",
+            "Offence",
+            "Defence",
+            "Potential",
+            "Team",
+        ],
+    )
+    df.index = [i for i in range(1, df.shape[0] + 1)]
+    print(df[["Id", "Name", "Surname", "Age", "Offence", "Defence", "Potential"]])
     print(f"\n{df[['Age', 'Offence', 'Defence', 'Potential']].mean().to_string()}\n")
     return
 
@@ -160,11 +192,13 @@ def show_all_teams():
 def show_one_team():
     """Displays one team and players"""
 
-    df = pd.DataFrame(sqlq.show_one_team_sql(), columns = ['Id', 'Name'])
+    df = pd.DataFrame(sqlq.show_one_team_sql(), columns=["Id", "Name"])
     print(df.to_string(index=False))
     try:
-        user_input = int(input("Please choose id of team you want to see players for: "))
-        team_name = df.loc[df['Id'] == user_input, 'Name'].iloc[0]
+        user_input = int(
+            input("Please choose id of team you want to see players for: ")
+        )
+        team_name = df.loc[df["Id"] == user_input, "Name"].iloc[0]
         print(f"\n{team_name} players:")
         show_players(user_input)
     except Exception as e:
@@ -176,7 +210,9 @@ def drop_player():
 
     show_one_team()
     try:
-        drop_id = int(input("Please provide id of player that you want to drop (0 to cancel): "))
+        drop_id = int(
+            input("Please provide id of player that you want to drop (0 to cancel): ")
+        )
         if drop_id == 0:
             return
         sqlq.drop_player_sql(drop_id)
@@ -189,24 +225,32 @@ def drop_player():
 def free_agents():
     """Check if Free Agents exists, if not - create"""
 
-    cur.execute("""SELECT count(*)
+    cur.execute(
+        """SELECT count(*)
                     FROM Teams
-                    WHERE id = 999""")
+                    WHERE id = 999"""
+    )
     if cur.fetchone()[0] == 0:
-        cur.execute("""INSERT INTO Teams (Id, Name, Founded)
-                       VALUES (999, "Free Agents", 9999);""")
+        cur.execute(
+            """INSERT INTO Teams (Id, Name, Founded)
+                       VALUES (999, "Free Agents", 9999);"""
+        )
     conn.commit()
 
 
 def draft_team():
     """Check if Draft exists, if not - create"""
 
-    cur.execute("""SELECT count(*)
+    cur.execute(
+        """SELECT count(*)
                     FROM Teams
-                    WHERE id = 998""")
+                    WHERE id = 998"""
+    )
     if cur.fetchone()[0] == 0:
-        cur.execute("""INSERT INTO Teams (Id, Name, Founded)
-                       VALUES (998, "Draft", 9999);""")
+        cur.execute(
+            """INSERT INTO Teams (Id, Name, Founded)
+                       VALUES (998, "Draft", 9999);"""
+        )
     conn.commit()
 
 
@@ -216,13 +260,17 @@ def trade_players():
     try:
         print("First player:")
         show_one_team()
-        one_id = int(input("Please provide id of player that needs to be traded (Cancel = 0): "))
+        one_id = int(
+            input("Please provide id of player that needs to be traded (Cancel = 0): ")
+        )
         if one_id == 0:
             return
 
         print("Second player:")
         show_one_team()
-        two_id = int(input("Please provide id of player that needs to be traded (Cancel = 0): "))
+        two_id = int(
+            input("Please provide id of player that needs to be traded (Cancel = 0): ")
+        )
         if two_id == 0:
             return
 
@@ -249,7 +297,7 @@ def sign_player():
             print("You can't sign a player who is not a free agent!")
             return
 
-        df = pd.DataFrame(sqlq.show_all_teams_sql(), columns = ['Id', 'Name'])
+        df = pd.DataFrame(sqlq.show_all_teams_sql(), columns=["Id", "Name"])
         print(f"{df.to_string(index=False)}\n")
 
         to_team = int(input("Choose to which team sign this player (cancel = 0):"))

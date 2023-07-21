@@ -3,10 +3,11 @@ import statistics_SL as s
 import season as se
 import sql_queries as sqlq
 
+# Optimized
+
 def main():
     while True:
         user_input = f.first_screen()                      # First screen alows the user to choose between actions
-
         function_dictionary = {1 :f.create_team,           # Create a new team and write it to DB
                                2 :f.create_player,         # Create a new player and write it to DB
                                3 :season_screen,           # Start new season
@@ -18,8 +19,7 @@ def main():
                                9 :f.inactivate_team,       # User can inactivate team and release it's players to free agents
                                10:f.exit_app               # Exits application
                                }
-
-        function_dictionary[user_input]()                  # Calls action that user added as input
+        function_dictionary.get(user_input, lambda: None)()  # Calls action that user added as input
 
 
 def season_screen():

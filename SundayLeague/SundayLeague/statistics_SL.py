@@ -46,6 +46,9 @@ def mip(year):
     return
 
 
+#This function prints out the draft order for a given year. It takes in the year as an argument and uses an SQL query to retrieve the data from the database. The data
+# is then stored in a pandas DataFrame and the relevant columns are printed out. The index of the DataFrame is set to the range of 1 to 11 to represent the draft order
+#. The function then returns the DataFrame.
 def show_draft_order(year):
     print("\nDraft Order:")
     sqlq.draft_order_sql(year)
